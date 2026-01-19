@@ -1,10 +1,8 @@
 // 1. On récupère les travaux depuis l'API
-fetch("http://localhost:5678/api/works") // Récuperation les travaux depuis L'API
-
-    .then (reponse=> reponse.json())
-    .then ( data=> {
-        genererTravaux(data); // On appelle la fonction pour afficher les travaux
-    });
+async function travaux() {
+    const reponse = await fetch("http://localhost:5678/api/works"); // Récuperation travaux depuis L'API
+    travauxDonnees = await reponse.json(); // Stocker dans la variable globale
+    genererTravaux(travauxDonnees)
 
 // 2. Fonction pour générer le HTML de la galerie
 function genererTravaux(travaux) {
