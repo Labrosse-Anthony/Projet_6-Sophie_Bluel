@@ -30,3 +30,30 @@ function genererTravaux(travaux) {
         sectionGallery.appendChild(figure);
     }
 }
+
+fetch("http://localhost:5678/api/categories")
+
+    .then (reponse=> reponse.json())
+    .then ( categories=> {
+        genererFiltres(categories);
+    });
+
+function genererFiltres(categories) {
+    const sectionFiltres = document.querySelector(".filters");
+
+    const boutonTous = document.createElement("button");
+    boutonTous.innerText = "Tous";
+    sectionFiltres.appendChild(boutonTous);
+
+    for (let i = 0; i < categories.length; i++) {
+    const categorie = categories[i];
+    const bouton = document.createElement("button");
+    bouton.innerText = categorie.name;
+
+    bouton.addEventListener("click", function() {
+        console.log("J'ai cliqué sur : " + categorie.name);
+    });
+
+    sectionFiltres.appendChild(bouton);
+}
+}
