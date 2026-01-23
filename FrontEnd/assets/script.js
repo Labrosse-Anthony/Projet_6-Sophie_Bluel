@@ -55,7 +55,7 @@ function genererFiltres(categories) {
         boutonTous.classList.add('active'); // Ajouter la classe 'active' au bouton "Tous"
         
         const worksAll = travauxDonnees.filter(function(travail) {
-            return travail.category.id === 1||travail.category.id === 2||travail.category.id === 3 // Ici, tu filtres pour garder les ID 1, 2 ou 3.
+            genererTravaux(travauxDonnees);
         })
         document.querySelector(".gallery").innerHTML = '';  // On vide la galerie actuelle
         genererTravaux(worksAll)  // On relance la génération avec la liste filtrée
