@@ -55,9 +55,16 @@ a {
 /* Style du bouton de connexion */
 /* Note : Le style de base est déjà dans style.css, ici on ajuste juste le curseur */
 #login input[type="submit"] {
+	font-family: 'Syne';
+	font-weight: 700;
+	color: white;
+	background-color: #1D6154;
+	margin : 2em auto ;
+	width: 180px;
+    height: 36px;
+	text-align: center;
+	border-radius: 60px ;
     cursor: pointer;
-    margin-top: 30px;
-    width: 180px;
 }
 
 /* Style du lien "Mot de passe oublié" */
@@ -67,5 +74,15 @@ a {
     text-decoration: underline;
     color: #3D3D3D;
     font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+}
+
+/* Style du message d'erreur */
+#error-message {
+    color: red;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 10px;
     font-size: 14px;
 }
