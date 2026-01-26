@@ -12,11 +12,14 @@ form.addEventListener("submit", async function(event) {
 
     // On prépare l'envoi vers l'API
     try {
-        const response = await fetch("http://localhost:5678/api/users/login", {
+        // await = "Mets-toi en pause et attends la réponse du serveur avant de continuer"
+        // fetch = permet d'envoyer des données à une adresse web (l'API)
+        const response = await fetch("http://localhost:5678/api/users/login", { 
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json" // On précise au serveur qu'on lui envoie du format JSON
             },
+            // // On transforme notre objet JavaScript (email + password) en texte JSON pour qu'il puisse voyager sur le réseau
             body: JSON.stringify({
                 email: email,
                 password: password
@@ -38,6 +41,7 @@ form.addEventListener("submit", async function(event) {
         }
 
     } catch (error) {
+        // Si le serveur est éteint, si l'URL est fausse ou si internet est coupé, le code saute directement ici.
         console.error("Erreur lors de la connexion :", error);
         errorMessage.innerText = "Une erreur est survenue, veuillez réessayer.";
     }
