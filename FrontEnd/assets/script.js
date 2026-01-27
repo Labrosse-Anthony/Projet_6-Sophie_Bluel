@@ -88,3 +88,62 @@ function genererFiltres(categories) {
 
 // On lance la fonction pour récupérer les catégories
 categories()
+
+
+/* --- GESTION DU MODE ÉDITION (Une fois connecté) --- */
+
+// On vérifie si le token est présent dans le stockage de la session
+const token = sessionStorage.getItem("token");
+
+if (token) {
+    // 1. Afficher la barre noire "Mode édition"
+    const editionMode = document.querySelector(".edition-mode");
+    editionMode.style.display = "flex";
+
+    // 2. Afficher le bouton "modifier"
+    const editBtn = document.querySelector(".modal-trigger");
+    editBtn.style.display = "flex";
+
+    // 3. Cacher les filtres
+    const filtersElement = document.querySelector(".filters");
+    filtersElement.style.display = "none";
+
+    // 4. Changer "login" en "logout"
+    const loginLink = document.getElementById("login-link");
+    loginLink.innerText = "logout";
+    
+    // 5. Gérer la déconnexion quand on clique sur "logout"
+    loginLink.addEventListener("click", function(event) {
+        event.preventDefault(); // On empêche le lien de nous changer de page tout de suite
+        sessionStorage.removeItem("token"); // On supprime le token
+        window.location.reload(); // On recharge la page (ce qui remettra le site en mode normal)
+    });
+}
+
+/* --- GESTION DE LA MODALE --- */
+
+const modal = document.getElementById("modal1"); // La fenêtre modale entière
+const btnModifier = document.querySelector(".modal-trigger"); // Le bouton "modifier"
+const btnFermer = document.querySelector(".modal-close"); // La croix
+const modalBackground = document.querySelector(".modal"); // Le fond grisé
+
+// Fonction pour ouvrir la modale
+btnModifier.addEventListener("click", function(event) {
+    event.preventDefault(); // Empêche le lien de nous faire remonter en haut de page
+    modal.style.display = "flex"; // On affiche la modale (flex pour centrer)
+    modal.removeAttribute("aria-hidden"); // Pour l'accessibilité (lecteurs d'écran)
+});
+
+// Fonction pour fermer la modale (au clic sur la croix)
+btnFermer.addEventListener("click", function() {
+    modal.style.display = "none"; // On cache la modale
+    modal.setAttribute("aria-hidden", "true"); // On indique qu'elle est cachée
+});
+
+// Fermer la modale si on clique sur le fond grisé (en dehors de la boîte blanche)
+modalBackground.addEventListener("click", function(event) {
+    if (event.target === modalBackground) { // On vérifie qu'on clique bien sur le fond et pas sur la boîte
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+    }
+});
