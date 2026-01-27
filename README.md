@@ -1,20 +1,9 @@
-# Portfolio-architecte-sophie-bluel
+# Projet_6-Sophie_Bluel
 
-Code du projet 6 d'intégrateur web.
+![Aperçu du site Print it](./FrontEnd/assets/images/img-sophie-bluel.webp)
 
-## Architecture
+- Ce travail a été réalisé dans le cadre du projet n°6 de la formation Intégrateur Web d’OpenClassrooms.
 
-Ce repo git contient les 2 briques logicielles du projet 
-- Frontend
-- Backend
+## Outils et langages pour la réalisation du projet
 
-## Pour le lancer le code
-### Backend
-Ouvrir le dossier Backend et lire le README.md
-
-### Frontend
-Ouvrir le dossier Frontend et lancer liveserver de votre IDE
- 
-## Astuce
- 
-Si vous désirez afficher le code du backend et du frontend, faites le dans 2 instances de VSCode différentes pour éviter tout problème
+- Le projet a été réalisé en **HTML**, **CSS** et **JavaScript**.
