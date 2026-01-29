@@ -31,7 +31,7 @@ form.addEventListener("submit", async function(event) {
             const data = await response.json();
             
             // IMPORTANT : On stocke le token (le "laissez-passer") dans le navigateur
-            sessionStorage.setItem("token", data.token);
+            localStorage.setItem("token", data.token);
             
             // On redirige vers la page d'accueil
             window.location.href = "index.html";
