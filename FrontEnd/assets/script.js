@@ -5,6 +5,7 @@ async function travaux() {
     const reponse = await fetch("http://localhost:5678/api/works"); // 'await' suspend l'exécution tant que la réponse n'est pas arrivée
     travauxDonnees = await reponse.json(); // Stocker dans la variable globale
     genererTravaux(travauxDonnees)
+    genererTravauxModal(travauxDonnees)
 }
 
 // 2. Fonction pour générer le HTML de la galerie
@@ -93,7 +94,7 @@ categories()
 /* --- GESTION DU MODE ÉDITION (Une fois connecté) --- */
 
 // On vérifie si le token est présent dans le stockage de la session
-const token = sessionStorage.getItem("token");
+const token = localStorage.getItem("token");
 
 if (token) {
     // 1. Afficher la barre noire "Mode édition"
@@ -115,7 +116,7 @@ if (token) {
     // 5. Gérer la déconnexion quand on clique sur "logout"
     loginLink.addEventListener("click", function(event) {
         event.preventDefault(); // On empêche le lien de nous changer de page tout de suite
-        sessionStorage.removeItem("token"); // On supprime le token
+        localStorage.removeItem("token"); // On supprime le token
         window.location.reload(); // On recharge la page (ce qui remettra le site en mode normal)
     });
 }
@@ -147,3 +148,72 @@ modalBackground.addEventListener("click", function(event) {
         modal.setAttribute("aria-hidden", "true");
     }
 });
+
+// Fonction pour générer la galerie dans la modale
+function genererTravauxModal(travaux) {
+    const modalGallery = document.querySelector(".modal-gallery");
+    modalGallery.innerHTML = ""; // On vide la galerie avant de la remplir
+
+    for (let i = 0; i < travaux.length; i++) {
+        const projet = travaux[i];
+
+        // Création des éléments
+        const figure = document.createElement("figure");
+        const image = document.createElement("img");
+        const span = document.createElement("span");
+        const trashIcon = document.createElement("i");
+
+        // Configuration de l'image
+        image.src = projet.imageUrl;
+        image.alt = projet.title;
+        image.style.width = "100%"; // Petit ajustement CSS rapide si besoin
+
+        // Configuration de l'icône poubelle
+        trashIcon.classList.add("fa-solid", "fa-trash-can");
+        span.classList.add("trash-icon"); // Classe pour le CSS (positionnement)
+        span.id = projet.id; // On garde l'ID du projet pour savoir quoi supprimer
+
+        // Assemblage
+        span.appendChild(trashIcon);
+        figure.appendChild(image);
+        figure.appendChild(span);
+        modalGallery.appendChild(figure);
+
+        // --- GESTION DU CLIC SUR LA POUBELLE (ÉTAPE 7) ---
+        span.addEventListener("click", function() {
+            supprimerProjet(projet.id);
+        });
+    }
+}
+
+async function supprimerProjet(id) {
+    const token = localStorage.getItem("token"); // Récupère le token  // Sans ce token, l'API refusera la suppression (Erreur 401).
+
+    try {
+        const response = await fetch(`http://localhost:5678/api/works/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}` // INDISPENSABLE : prouve que tu soit admin
+            }
+        });
+
+        if (response.ok) {
+            // Si la suppression a marché :
+            
+            // 1. On met à jour la liste globale des travaux
+            // On garde tout SAUF celui qu'on vient de supprimer
+            travauxDonnees = travauxDonnees.filter(travail => travail.id !== id);
+
+            // 2. On régénère les affichages sans recharger la page
+            genererTravaux(travauxDonnees);       // Met à jour la page d'accueil
+            genererTravauxModal(travauxDonnees);  // Met à jour la modale
+            
+            console.log("Projet supprimé !");
+        } else {
+            console.error("Erreur lors de la suppression");
+        }
+    } catch (error) {
+        console.error("Erreur réseau :", error); // On arrive ici seulement si la requête n'a pas pu partir ou revenir
+    }
+}
+

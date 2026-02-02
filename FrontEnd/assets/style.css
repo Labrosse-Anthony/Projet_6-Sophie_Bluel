@@ -314,3 +314,133 @@ footer nav ul {
     cursor: pointer;
     font-size: 14px;
 }
+
+/* Style pour la galerie de la modale */
+.modal-gallery {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 colonnes comme sur la maquette */
+    gap: 10px;
+    width: 100%;
+}
+
+.modal-gallery figure {
+    position: relative; /* Pour positionner l'icône par rapport à l'image */
+    margin: 0;
+}
+
+.trash-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: black;
+    color: white;
+    width: 17px;
+    height: 17px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+/* --- STYLE DU FORMULAIRE D'AJOUT --- */
+
+/* Navigation en haut (Flèche retour + Croix) */
+.modal-nav {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.modal-back {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Zone bleue d'upload */
+.upload-container {
+    background-color: #E8F1F6;
+    height: 170px;
+    width: 100%;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.upload-icon {
+    font-size: 60px;
+    color: #B9C5CC;
+    margin-bottom: 10px;
+}
+
+/* Le bouton "+ Ajouter photo" (Label stylisé) */
+.upload-label {
+    background-color: #CBD6DC;
+    color: #306685;
+    padding: 10px 33px;
+    border-radius: 50px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+/* On cache le vrai input file moche */
+#file-upload {
+    display: none;
+}
+
+.upload-info {
+    font-size: 10px;
+    color: #444;
+}
+
+/* L'image de prévisualisation */
+#preview-img {
+    height: 100%;
+    object-fit: contain;
+    position: absolute;
+    z-index: 10;
+}
+
+/* Styles des champs texte et select */
+#add-photo {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#add-photo label {
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+#add-photo input[type="text"],
+#add-photo select {
+    height: 50px;
+    border: none;
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+    margin-bottom: 20px;
+    padding-left: 10px;
+    width: 100%;
+    box-sizing: border-box; /* Important pour ne pas dépasser */
+}
+
+/* Bouton Valider (Gris par défaut, deviendra Vert via JS) */
+#btn-valider {
+    font-family: 'Syne';
+    font-weight: 700;
+    color: white;
+    background-color: #A7A7A7; /* Gris par défaut */
+    padding: 10px 40px;
+    border-radius: 60px;
+    border: none;
+    cursor: pointer;
+    align-self: center;
+}

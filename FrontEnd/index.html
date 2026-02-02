@@ -71,15 +71,39 @@
 	</nav>
 </footer>
 <aside id="modal1" class="modal" aria-hidden="true" role="dialog" style="display:none;">
-    <div class="modal-wrapper">
-        <button class="modal-close">
-			<i class="fa-solid fa-xmark"></i>
-		</button>
+    <div class="modal-wrapper modal-gallery">
+        <button class="modal-close modal-close">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
         <h3 id="titlemodal">Galerie photo</h3>
         <div class="modal-gallery"></div>
         <hr class="modal-line">
-        <input type="submit" value="Ajouter une photo" class="button-add-photo">
+        <input type="submit" value="Ajouter une photo" class="button-add-photo btn-add-photo">
     </div>
-</aside>
+    <div class="modal-wrapper modal-add" style="display:none;">
+        <div class="modal-nav">
+            <button class="modal-back"><i class="fa-solid fa-arrow-left"></i></button>
+            <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <h3>Ajout photo</h3>
+        <form id="add-photo">
+            <div class="upload-container">
+                <i class="fa-regular fa-image upload-icon"></i>
+                <img id="preview-img" src="#" alt="Aperçu" style="display:none;">
+                <label for="file-upload" class="upload-label">+ Ajouter photo</label>
+                <input type="file" id="file-upload" name="image" accept="image/png, image/jpeg" required>
+                <p class="upload-info">jpg, png : 4mo max</p>
+            </div>
+            <label for="title-input">Titre</label>
+            <input type="text" id="title-input" name="title" required>
+            <label for="category-select">Catégorie</label>
+            <select id="category-select" name="category" required>
+                <option value="" disabled selected></option>
+            </select>
+            <hr class="modal-line">
+            <input type="submit" value="Valider" id="btn-valider">
+        </form>
+    </div>
+</aside>	
 </body>
 </html>
