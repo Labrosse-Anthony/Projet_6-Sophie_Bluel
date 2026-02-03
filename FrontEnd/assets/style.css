@@ -264,9 +264,9 @@ footer nav ul {
 
 /* La boîte blanche au milieu */
 .modal-wrapper {
-    overflow: auto;
+    overflow: hidden;
     width: 630px;
-    height: 600px; /* Hauteur fixe ou max-content selon besoin */
+    height: max-content; /* Hauteur fixe ou max-content selon besoin */
     padding: 20px;
     background-color: white;
     border-radius: 10px;

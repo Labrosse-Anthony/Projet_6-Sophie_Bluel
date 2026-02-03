@@ -1,4 +1,5 @@
-// 1. On récupère les travaux depuis l'API
+// SECTION 1 : RÉCUPERATION ET AFFICHAGE DES TRAVAUX ( ACCEUIL )
+//  On récupère les travaux depuis l'API
 let travauxDonnees = []; // // Cela permet d'utiliser les travaux plus tard dans les filtres sans refaire d'appel API
 
 async function travaux() {
@@ -8,7 +9,7 @@ async function travaux() {
     genererTravauxModal(travauxDonnees)
 }
 
-// 2. Fonction pour générer le HTML de la galerie
+// Fonction pour générer le HTML de la galerie
 function genererTravaux(travaux) { 
     const sectionGallery = document.querySelector(".gallery"); // On cible la div .gallery
 
@@ -34,7 +35,7 @@ function genererTravaux(travaux) {
 }
 travaux() // On lance la fonction principale pour démarrer le processus au chargement de la page
 
-
+// SECTION 2 : LES FILTRES (BOUTONS)
 async function categories() {
     const reponse = await fetch("http://localhost:5678/api/categories"); // Appel API pour récupérer la liste des catégories (Objets, Appartements, etc.)
     const categories = await reponse.json();
@@ -91,7 +92,7 @@ function genererFiltres(categories) {
 categories()
 
 
-/* --- GESTION DU MODE ÉDITION (Une fois connecté) --- */
+// SECTION 3 : MODE ADMINISTRATEUR (CONNECTÉ)
 
 // On vérifie si le token est présent dans le stockage de la session
 const token = localStorage.getItem("token");
@@ -121,11 +122,11 @@ if (token) {
     });
 }
 
-/* --- GESTION DE LA MODALE --- */
+// SECTION 4 : GESTION DE L'OUVERTURE ET FERMETURE DE LA MODALE
 
 const modal = document.getElementById("modal1"); // La fenêtre modale entière
 const btnModifier = document.querySelector(".modal-trigger"); // Le bouton "modifier"
-const btnFermer = document.querySelector(".modal-close"); // La croix
+const boutonsFermer = document.querySelectorAll(".modal-close"); // La croix
 const modalBackground = document.querySelector(".modal"); // Le fond grisé
 
 // Fonction pour ouvrir la modale
@@ -135,10 +136,12 @@ btnModifier.addEventListener("click", function(event) {
     modal.removeAttribute("aria-hidden"); // Pour l'accessibilité (lecteurs d'écran)
 });
 
-// Fonction pour fermer la modale (au clic sur la croix)
-btnFermer.addEventListener("click", function() {
-    modal.style.display = "none"; // On cache la modale
-    modal.setAttribute("aria-hidden", "true"); // On indique qu'elle est cachée
+// Fonction pour fermer les modales (au clic sur la croix)
+boutonsFermer.forEach(bouton => {
+    bouton.addEventListener("click", function() {
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+    });
 });
 
 // Fermer la modale si on clique sur le fond grisé (en dehors de la boîte blanche)
@@ -148,6 +151,8 @@ modalBackground.addEventListener("click", function(event) {
         modal.setAttribute("aria-hidden", "true");
     }
 });
+
+// SECTION 5 : GALERIE DE LA MODALE ET SUPPRESSION
 
 // Fonction pour générer la galerie dans la modale
 function genererTravauxModal(travaux) {
@@ -179,7 +184,7 @@ function genererTravauxModal(travaux) {
         figure.appendChild(span);
         modalGallery.appendChild(figure);
 
-        // --- GESTION DU CLIC SUR LA POUBELLE (ÉTAPE 7) ---
+        // --- GESTION DU CLIC SUR LA POUBELLE ---
         span.addEventListener("click", function() {
             supprimerProjet(projet.id);
         });
@@ -215,5 +220,72 @@ async function supprimerProjet(id) {
     } catch (error) {
         console.error("Erreur réseau :", error); // On arrive ici seulement si la requête n'a pas pu partir ou revenir
     }
+}
+
+// SECTION 6 : NAVIGATION DANS LA MODALE (GALERIE AJOUT)
+
+// On sélectionne les éléments HTML (boutons et conteneurs) pour pouvoir interagir avec eux
+const btnAjouterPhoto = document.querySelector(".btn-add-photo");
+const btnRetour = document.querySelector(".modal-back");
+const vueGalerie = document.querySelector(".modal-view-gallery");
+const vueAjout = document.querySelector(".modal-add");
+
+// On vérifie si le bouton existe avant d'ajouter l'événement (pour éviter des erreurs si on n'est pas connecté)
+if (btnAjouterPhoto) {
+    // On écoute le "clic" sur le bouton
+    btnAjouterPhoto.addEventListener("click", function() {
+        // ACTION : On bascule l'affichage
+        // On cache la vue "Galerie" (display: none)
+        document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "none";
+        // On affiche la vue "Ajout" (display: flex pour garder la mise en page flexible)
+        document.querySelector(".modal-wrapper.modal-add").style.display = "flex";
+    });
+}
+
+// Gestion du bouton retour (la flèche)
+if (btnRetour) {
+    btnRetour.addEventListener("click", function() {
+        // ACTION : On fait l'inverse (Retour à la galerie)
+        document.querySelector(".modal-wrapper.modal-add").style.display = "none";     // On cache le formulaire
+        document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // On réaffiche la galerie
+    });
+}
+
+// SECTION 7 : PRÉVISUALISATION DE L'IMAGE (AVANT ENVOI)
+
+// On récupère les éléments liés à l'upload d'image
+const inputPhoto = document.getElementById("file-upload"); // Le champ <input type="file"> (souvent caché)
+const previewImage = document.getElementById("preview-img"); // La balise <img> vide qui servira à la prévisualisation
+const labelPhoto = document.querySelector(".upload-label"); // Le bouton "+ Ajouter photo" visible
+const iconPhoto = document.querySelector(".upload-icon");   // L'icône de montagne/image
+const infoPhoto = document.querySelector(".upload-info");   // Le texte "jpg, png : 4mo max"
+
+if (inputPhoto) {
+    // On écoute l'événement "change" : se déclenche quand l'utilisateur a choisi un fichier
+    inputPhoto.addEventListener("change", function() {
+        // "this.files[0]" récupère le premier fichier sélectionné par l'utilisateur
+        const file = this.files[0];
+
+        // Si un fichier a bien été sélectionné
+        if (file) {
+            // Création d'un "FileReader" : un outil JS qui permet de lire le contenu d'un fichier sur l'ordi de l'utilisateur
+            const reader = new FileReader();
+
+            // On définit ce qui doit se passer une fois que la lecture est finie ("onload")
+            reader.onload = function(e) {
+                // e.target.result contient l'image convertie en code (Base64) lisible par le navigateur
+                previewImage.src = e.target.result; // On donne cette source à notre balise <img>
+                previewImage.style.display = "block"; // On rend l'image visible
+                
+                // On cache les éléments de décoration (label, icône, texte) pour que l'image prenne toute la place
+                labelPhoto.style.display = "none";
+                iconPhoto.style.display = "none";
+                infoPhoto.style.display = "none";
+            }
+
+            // C'est cette ligne qui lance la lecture du fichier. Une fois lu, ça déclenchera le "onload" juste au-dessus.
+            reader.readAsDataURL(file);
+        }
+    });
 }
 
