@@ -509,3 +509,8 @@ footer li {
     cursor: pointer;
     align-self: center;
 }
+
+#btn-valider.valide {
+    background-color: #1D6154;
+    cursor: pointer;
+}
