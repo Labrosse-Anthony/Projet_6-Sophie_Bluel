@@ -3,16 +3,60 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;  /* Force la page à faire au minimum 100% de la hauteur de l'écran */
+    font-size: 14px;
+    background-color: #FFFEF8;
 }
 
 /* Le main pousse le footer vers le bas */
 main {
     flex: 1;
+    max-width: 1140px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+header {
+    max-width: 1140px;
+    width: 100%;
+    margin-top: 50px auto;
+
 }
 
 a {
     text-decoration: none;
     color: inherit;
+}
+
+footer {
+    width: 100%;
+    background-color: white;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: auto;
+}
+
+footer nav {
+    width: 100%;
+    max-width: 1180px;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0;
+}
+
+footer ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+footer li {
+    font-family: 'Work Sans';
+    font-size: 14px;
+    color: black;
+    cursor: pointer;
 }
 
 #login {
