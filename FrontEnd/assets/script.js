@@ -60,7 +60,7 @@ function genererFiltres(categories) {
             genererTravaux(travauxDonnees);
         })
         document.querySelector(".gallery").innerHTML = '';  // On vide la galerie actuelle
-        genererTravaux(worksAll)  // On relance la génération avec la liste filtrée
+        genererTravaux(travauxDonnees)  // On relance la génération avec la liste filtrée
     });
 
     for (let i = 0; i < categories.length; i++) {
@@ -159,7 +159,7 @@ function genererTravauxModal(travaux) {
     const modalGallery = document.querySelector(".modal-gallery");
     modalGallery.innerHTML = ""; // On vide la galerie avant de la remplir
 
-    for (let i = 0; i < travaux.length; i++) {
+    for (let i = 0; i < travaux.length; i++) { // On démarre une boucle pour passer sur chaque projet un par un
         const projet = travaux[i];
 
         // Création des éléments
@@ -179,26 +179,27 @@ function genererTravauxModal(travaux) {
         span.id = projet.id; // On garde l'ID du projet pour savoir quoi supprimer
 
         // Assemblage
-        span.appendChild(trashIcon);
-        figure.appendChild(image);
-        figure.appendChild(span);
-        modalGallery.appendChild(figure);
+        span.appendChild(trashIcon); // On met l'icône poubelle DANS le carré noir (span)
+        figure.appendChild(image); // On met l'image DANS la figure
+        figure.appendChild(span); // On met le carré noir (avec la poubelle) DANS la figure aussi (par dessus l'image grâce au CSS absolute)
+        modalGallery.appendChild(figure); // On ajoute la figure complète DANS la galerie de la modale
 
         // --- GESTION DU CLIC SUR LA POUBELLE ---
-        span.addEventListener("click", function() {
-            supprimerProjet(projet.id);
+        span.addEventListener("click", function() { // On surveille si l'utilisateur clique sur le petit carré noir (span)
+            supprimerProjet(projet.id); // Si clic, on lance la fonction de suppression en lui donnant l'ID précis de ce projet
         });
     }
 }
 
-async function supprimerProjet(id) {
+async function supprimerProjet(id) { // Fonction asynchrone (car elle appelle le serveur) pour supprimer un projet
     const token = localStorage.getItem("token"); // Récupère le token  // Sans ce token, l'API refusera la suppression (Erreur 401).
 
+    // On ouvre un bloc try/catch pour gérer les erreurs potentielles
     try {
-        const response = await fetch(`http://localhost:5678/api/works/${id}`, {
-            method: "DELETE",
+        const response = await fetch(`http://localhost:5678/api/works/${id}`, { // On envoie une requête au serveur à l'adresse "api/works/ID_DU_PROJET"
+            method: "DELETE", // On précise qu'on veut SUPPRIMER (DELETE)
             headers: {
-                "Authorization": `Bearer ${token}` // INDISPENSABLE : prouve que tu soit admin
+                "Authorization": `Bearer ${token}` // On montre notre "laissez-passer" au serveur. Sans ça, erreur 401 (Interdit)
             }
         });
 
@@ -213,9 +214,9 @@ async function supprimerProjet(id) {
             genererTravaux(travauxDonnees);       // Met à jour la page d'accueil
             genererTravauxModal(travauxDonnees);  // Met à jour la modale
             
-            console.log("Projet supprimé !");
+            console.log("Projet supprimé !");  // Petit message dans la console pour dire que tout s'est bien passé
         } else {
-            console.error("Erreur lors de la suppression");
+            console.error("Erreur lors de la suppression"); // Si le serveur dit non , on l'affiche
         }
     } catch (error) {
         console.error("Erreur réseau :", error); // On arrive ici seulement si la requête n'a pas pu partir ou revenir
@@ -289,3 +290,46 @@ if (inputPhoto) {
     });
 }
 
+// SECTION 8 : REMPLISSAGE DU SELECT (MENU DÉROULANT CATÉGORIES)
+
+// Fonction "async" car on fait un appel réseau (fetch) qui prend du temps
+async function chargerCategoriesSelect() {
+    // On cible la balise <select> du HTML par son ID
+    const select = document.getElementById("category-select"); 
+    
+    // On remet le select à zéro (vide) et on ajoute une option "blanche" par défaut.
+    // "disabled selected" fait que cette option est visible au début mais non cliquable ensuite.
+    select.innerHTML = '<option value="" disabled selected></option>';
+    
+    try {
+        // (Cette ligne est bien commentée car inutile : on ne veut pas les travaux ici, mais les catégories)
+        // const reponse = await fetch("http://localhost:5678/api/works"); 
+        
+        // APPEL API : On demande la liste des catégories au serveur
+        const reponseCats = await fetch("http://localhost:5678/api/categories");
+        
+        // CONVERSION : On transforme la réponse brute en tableau JavaScript exploitable
+        const categories = await reponseCats.json();
+
+        // BOUCLE : Pour chaque catégorie trouvée (ex: "Objets", "Appartements")...
+        categories.forEach(categorie => {
+            // ... on crée une balise <option> virtuelle
+            const option = document.createElement("option");
+            
+            // On définit la VALEUR cachée qui sera envoyée au serveur (l'ID, ex: 1)
+            option.value = categorie.id;      
+            
+            // On définit le TEXTE visible par l'utilisateur (le Nom, ex: "Objets")
+            option.innerText = categorie.name; 
+            
+            // On insère cette option dans le menu déroulant <select>
+            select.appendChild(option);
+        });
+    } catch (error) {
+        // Si le serveur est éteint ou l'URL fausse, on affiche l'erreur dans la console
+        console.error("Erreur lors du chargement des catégories dans le select", error);
+    }
+}
+
+// On lance la fonction immédiatement au chargement de la page pour que le menu soit prêt
+chargerCategoriesSelect();
