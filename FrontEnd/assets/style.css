@@ -16,43 +16,47 @@ article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
 }
+
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
-	display: block;
+    display: block;
 }
+
 body {
-	line-height: 1;
+    line-height: 1;
     font-size: 14px;
     background-color: #FFFEF8;
+    font-family: 'Work Sans', sans-serif;
 }
+
 ol, ul {
-	list-style: none;
+    list-style: none;
 }
+
 blockquote, q {
-	quotes: none;
+    quotes: none;
 }
+
 blockquote:before, blockquote:after,
 q:before, q:after {
-	content: '';
-	content: none;
+    content: '';
+    content: none;
 }
+
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
-/** end reset css**/
-body {
-	font-family: 'Work Sans' ;
-	font-size: 14px;
-}
+
+/** end reset css **/
 
 main, header {
     max-width: 1140px;
@@ -60,50 +64,50 @@ main, header {
 }
 
 header {
-	display: flex;
-	justify-content: space-between;
-	margin: 50px auto;
+    display: flex;
+    justify-content: space-between;
+    margin: 50px auto;
 }
 
 section {
-	margin: 50px 0
+    margin: 50px 0;
 }
 
-h1{
-	display: flex;
-	flex-direction: column;
-	font-family: 'Syne';
-	font-size: 22px;
-	font-weight: 800;
-	color: #B1663C
+h1 {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: #B1663C;
 }
 
 h1 > span {
-	font-family: 'Work Sans';
-	font-size:10px;
-	letter-spacing: 0.1em;
-;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
 }
 
-h2{
-	font-family: 'Syne';
-	font-weight: 700;
-	font-size: 30px;
-	color: #1D6154
+h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    color: #1D6154;
 }
+
 nav ul {
-	display: flex;
-	align-items: center;
-	list-style-type: none;
-
+    display: flex;
+    align-items: center;
+    list-style-type: none;
 }
+
 nav li {
-	padding: 0 10px;
-	font-size: 1.2em;
+    padding: 0 10px;
+    font-size: 1.2em;
 }
 
 li:hover {
-	color: #B1663C;
+    color: #B1663C;
 }
 
 a {
@@ -111,138 +115,112 @@ a {
     color: inherit;
 }
 
+/* --- INTRODUCTION --- */
 #introduction {
-	display: flex;
-	align-items: center;
+    display: flex;
+    align-items: center;
 }
+
 #introduction figure {
-	flex: 1
+    flex: 1;
 }
+
 #introduction img {
-	display: block;
-	margin: auto;
-	width: 80%;
+    display: block;
+    margin: auto;
+    width: 80%;
 }
 
 #introduction article {
-	flex: 1
+    flex: 1;
 }
+
 #introduction h2 {
-	margin-bottom: 1em;
+    margin-bottom: 1em;
 }
 
 #introduction p {
-	margin-bottom: 0.5em;
+    margin-bottom: 0.5em;
 }
+
 #portfolio h2 {
-	text-align: center;
-	margin-bottom: 1em;
+    text-align: center;
+    margin-bottom: 1em;
 }
+
 .gallery {
-	width: 90%;
+    width: 90%;
     margin: auto;
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	grid-column-gap: 20px;
-	grid-row-gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
 }
 
 .gallery img {
-	width: 100%;
-
+    width: 100%;
 }
+
 #contact {
-	width: 35%;
+    width: 35%;
     margin: auto;
     margin-top: 57px;
 }
+
 #contact > * {
-	text-align: center;
+    text-align: center;
+}
 
+#contact h2 {
+    margin-bottom: 20px;
 }
-#contact h2{
-	margin-bottom: 20px;
-}
+
 #contact form {
-	text-align: left;
-	margin-top:30px;
-	display: flex;
-	flex-direction: column;
+    text-align: left;
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
 }
 
-#contact input, #contact textarea {
+#contact input, 
+#contact textarea {
     width: 100%;
-	border: none;
-    background: white;
-	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
     border: none;
+    background: white;
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
-#contact input{
+
+#contact input {
     height: 50px;
     padding-left: 10px;
 }
+
 #contact label {
-	margin: 20px 0 10px 0;
+    margin: 20px 0 10px 0;
     text-align: left;
 }
+
 #contact textarea {
     height: 150px;
-	resize: none;
+    resize: none;
     padding: 10px;
 }
+
 #contact input[type="submit"] {
-    width: 180px; 
+    width: 180px;
     height: 36px;
-    margin: 40px auto 0 auto; 
+    margin: 40px auto 0 auto;
     border-radius: 60px;
     background-color: #1D6154;
     color: white;
-    font-family: 'Syne';
+    font-family: 'Syne', sans-serif;
     font-weight: 700;
     border: none;
     cursor: pointer;
     box-shadow: none;
 }
 
-
-footer nav ul {
-	display: flex;
-	justify-content: flex-end;
-	margin: 2em
-}
-
-/* Ajout de code */
-
-/* FILTRE */
-
-.filters {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 30px;
-}
-
-.filters button {
-    font-family: 'Syne';
-    font-weight: 700;
-    color: #1D6154;
-    background-color: white;
-    border: 1px solid #1D6154;
-    border-radius: 60px;
-    padding: 10px 20px;
-    cursor: pointer;
-}
-
-.filters button.active {
-    color: white;
-    background-color: #1D6154;
-}
-
-.filters button:hover {
-    color: white;
-    background-color: #1D6154;
-}
-
+/* --- FOOTER --- */
 footer {
     background-color: white;
     width: 100%;
@@ -262,21 +240,50 @@ footer nav {
 }
 
 footer nav ul {
-    list-style: none;
+    display: flex;
+    justify-content: flex-end;
     margin: 0;
     padding: 0;
+    list-style: none;
 }
 
 footer li {
-    font-family: 'Work Sans';
+    font-family: 'Work Sans', sans-serif;
     font-size: 14px;
     color: black;
     cursor: pointer;
 }
 
-/* MODE ÉDITION */
+/* --- FILTRE --- */
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
 
-/* La barre noire en haut */
+.filters button {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    color: #1D6154;
+    background-color: white;
+    border: 1px solid #1D6154;
+    border-radius: 60px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.filters button.active {
+    color: white;
+    background-color: #1D6154;
+}
+
+.filters button:hover {
+    color: white;
+    background-color: #1D6154;
+}
+
+/* --- MODE ÉDITION --- */
 .edition-mode {
     display: none;
     justify-content: center;
@@ -285,36 +292,32 @@ footer li {
     color: white;
     height: 59px;
     width: 100%;
-    gap: 10px; /* Espace entre l'icône et le texte */
+    gap: 10px;
 }
 
-/* Le conteneur du titre "Mes Projets" et du bouton modifier */
 .projects-title {
     display: flex;
-	justify-content: center;
-	align-items: center;
-	margin-top : 50px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
 }
 
-/* Le bouton "modifier" */
 .modal-trigger {
-	font-family : 'Work Sans';
-	font-size : 14px;
-	font-weight: 400;
-	background-color: #FFFEF8;
-	border : none;
-	margin-left : 30px;
-	margin-bottom: 25px;
-	cursor : pointer;	
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    background-color: #FFFEF8;
+    border: none;
+    margin-left: 30px;
+    margin-bottom: 25px;
+    cursor: pointer;
 }
 
 .modal-trigger-icon {
-	margin-right : 10px
+    margin-right: 10px;
 }
 
 /* --- LA MODALE --- */
-
-/* Le fond grisé qui prend tout l'écran */
 .modal {
     position: fixed;
     display: flex;
@@ -324,27 +327,25 @@ footer li {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3); /* Fond noir transparent */
-    z-index: 100; /* Pour être sûr qu'elle est au-dessus de tout */
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 100;
 }
 
-/* La boîte blanche au milieu */
 .modal-wrapper {
     overflow: hidden;
     width: 630px;
-    height: max-content; /* Hauteur fixe ou max-content selon besoin */
+    height: max-content;
     padding: 20px;
     background-color: white;
     border-radius: 10px;
-    box-sizing: border-box; /* Important pour les paddings */
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centre le contenu horizontalement */
+    align-items: center;
 }
 
-/* La croix de fermeture */
 .modal-close {
-    align-self: flex-end; /* Place la croix à droite */
+    align-self: flex-end;
     background: none;
     border: none;
     font-size: 20px;
@@ -352,15 +353,13 @@ footer li {
     margin-bottom: 20px;
 }
 
-/* Titre de la modale */
 .modal h3 {
-    font-family: 'Work Sans';
+    font-family: 'Work Sans', sans-serif;
     font-size: 26px;
     color: black;
     margin-bottom: 40px;
 }
 
-/* Ligne grise de séparation */
 .modal-line {
     width: 80%;
     border: 1px solid #B3B3B3;
@@ -368,9 +367,8 @@ footer li {
     margin-bottom: 40px;
 }
 
-/* Bouton vert "Ajouter une photo" */
 .button-add-photo {
-    font-family: 'Syne';
+    font-family: 'Syne', sans-serif;
     font-weight: 700;
     color: white;
     background-color: #1D6154;
@@ -381,16 +379,15 @@ footer li {
     font-size: 14px;
 }
 
-/* Style pour la galerie de la modale */
 .modal-gallery {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 colonnes comme sur la maquette */
+    grid-template-columns: repeat(5, 1fr);
     gap: 10px;
     width: 100%;
 }
 
 .modal-gallery figure {
-    position: relative; /* Pour positionner l'icône par rapport à l'image */
+    position: relative;
     margin: 0;
 }
 
@@ -411,9 +408,7 @@ footer li {
     z-index: 10;
 }
 
-/* --- STYLE DU FORMULAIRE D'AJOUT --- */
-
-/* Navigation en haut (Flèche retour + Croix) */
+/* --- FORMULAIRE AJOUT PHOTO (MODALE 2) --- */
 .modal-nav {
     display: flex;
     justify-content: space-between;
@@ -427,7 +422,6 @@ footer li {
     cursor: pointer;
 }
 
-/* Zone bleue d'upload */
 .upload-container {
     background-color: #E8F1F6;
     height: 170px;
@@ -447,7 +441,6 @@ footer li {
     margin-bottom: 10px;
 }
 
-/* Le bouton "+ Ajouter photo" (Label stylisé) */
 .upload-label {
     background-color: #CBD6DC;
     color: #306685;
@@ -458,7 +451,6 @@ footer li {
     margin-bottom: 10px;
 }
 
-/* On cache le vrai input file moche */
 #file-upload {
     display: none;
 }
@@ -468,7 +460,6 @@ footer li {
     color: #444;
 }
 
-/* L'image de prévisualisation */
 #preview-img {
     height: 100%;
     object-fit: contain;
@@ -476,7 +467,6 @@ footer li {
     z-index: 10;
 }
 
-/* Styles des champs texte et select */
 #add-photo {
     width: 100%;
     display: flex;
@@ -496,12 +486,11 @@ footer li {
     margin-bottom: 20px;
     padding-left: 10px;
     width: 100%;
-    box-sizing: border-box; /* Important pour ne pas dépasser */
+    box-sizing: border-box;
 }
 
-/* Bouton Valider (Gris par défaut, deviendra Vert via JS) */
 #btn-valider {
-    font-family: 'Syne';
+    font-family: 'Syne', sans-serif;
     font-weight: 700;
     color: white;
     background-color: #A7A7A7; /* Gris par défaut */

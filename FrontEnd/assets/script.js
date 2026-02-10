@@ -1,151 +1,147 @@
-// SECTION 1 : RÉCUPERATION ET AFFICHAGE DES TRAVAUX ( ACCEUIL )
-//  On récupère les travaux depuis l'API
-let travauxDonnees = []; // // Cela permet d'utiliser les travaux plus tard dans les filtres sans refaire d'appel API
+// SECTION 1 : RÉCUPERATION ET AFFICHAGE DES TRAVAUX
+let travauxDonnees = []; // Variable globale pour stocker les données des travaux
 
 async function travaux() {
-    const reponse = await fetch("http://localhost:5678/api/works"); // 'await' suspend l'exécution tant que la réponse n'est pas arrivée
-    travauxDonnees = await reponse.json(); // Stocker dans la variable globale
-    genererTravaux(travauxDonnees)
-    genererTravauxModal(travauxDonnees)
-}
-
-// Fonction pour générer le HTML de la galerie
-function genererTravaux(travaux) { 
-    const sectionGallery = document.querySelector(".gallery"); // On cible la div .gallery
-
-    // On parcourt la liste des travaux (boucle)
-    for (let i = 0; i < travaux.length; i++) {
-        const projet = travaux[i];
-
-        // Création des balises
-        const figure = document.createElement("figure");
-        const image = document.createElement("img");
-        const figcaption = document.createElement("figcaption");
-
-        // Configuration des attributs (src, alt, texte)
-        image.src = projet.imageUrl;
-        image.alt = projet.title;
-        figcaption.innerText = projet.title;
-
-        // Rattachement des éléments (Parent -> Enfant)
-        figure.appendChild(image);
-        figure.appendChild(figcaption);
-        sectionGallery.appendChild(figure);
+    try {
+        const reponse = await fetch("http://localhost:5678/api/works"); // Appel à l'API pour récupérer les travaux
+        travauxDonnees = await reponse.json(); // Conversion de la réponse en JSON et stockage global
+        
+        genererTravaux(travauxDonnees); // Affichage initial de tous les travaux
+        
+        if (typeof genererTravauxModal === "function") { // Vérifie si la fonction de la modale existe
+             genererTravauxModal(travauxDonnees); // Génère aussi les travaux dans la modale
+        }
+    } catch (error) {
+        console.error("Erreur récupération travaux :", error); // Affiche l'erreur en console si l'API échoue
     }
 }
-travaux() // On lance la fonction principale pour démarrer le processus au chargement de la page
 
-// SECTION 2 : LES FILTRES (BOUTONS)
+function genererTravaux(travaux) {
+    const sectionGallery = document.querySelector(".gallery"); // Sélectionne la div .gallery
+    sectionGallery.innerHTML = ""; // Vide la galerie pour éviter les doublons
+
+    for (let i = 0; i < travaux.length; i++) { // Boucle sur chaque projet
+        const projet = travaux[i]; // Récupère le projet en cours
+
+        const figure = document.createElement("figure"); // Crée une balise figure
+        const image = document.createElement("img"); // Crée une balise img
+        const figcaption = document.createElement("figcaption"); // Crée une légende
+
+        image.src = projet.imageUrl; // Définit l'URL de l'image
+        image.alt = projet.title; // Définit le texte alternatif
+        figcaption.innerText = projet.title; // Ajoute le titre du projet
+
+        figure.appendChild(image); // Insère l'image dans la figure
+        figure.appendChild(figcaption); // Insère la légende dans la figure
+        sectionGallery.appendChild(figure); // Ajoute la figure complète à la galerie
+    }
+}
+
+travaux(); // Lance la fonction principale au chargement
+
+// SECTION 2 : LES FILTRES
 async function categories() {
-    const reponse = await fetch("http://localhost:5678/api/categories"); // Appel API pour récupérer la liste des catégories (Objets, Appartements, etc.)
-    const categories = await reponse.json();
-    genererFiltres(categories) // On appelle la fonction qui va créer les boutons, en lui passant les catégories reçues
+    try {
+        const reponse = await fetch("http://localhost:5678/api/categories"); // Appel API pour les catégories
+        const categories = await reponse.json(); // Conversion en JSON
+        genererFiltres(categories); // Lance la création des boutons
+    } catch (error) {
+        console.error("Erreur récupération catégories :", error); // Gestion des erreurs
+    }
 }
 
 function genererFiltres(categories) {
-    const sectionFiltres = document.querySelector(".filters");
+    const sectionFiltres = document.querySelector(".filters"); // Sélectionne la div des filtres
 
-    const boutonTous = document.createElement("button"); // Création du bouton
-    boutonTous.innerText = "Tous"; // Texte du bouton
-    boutonTous.classList.add('filtresbutton'); // Ajout de la classe CSS pour le style
-    boutonTous.classList.add('active'); //On le met "actif" (vert) par défaut au chargement
-    sectionFiltres.appendChild(boutonTous); // On l'ajoute à la page
+    // --- Bouton "Tous" ---
+    const boutonTous = document.createElement("button"); // Crée le bouton "Tous"
+    boutonTous.innerText = "Tous"; // Ajoute le texte "Tous"
+    boutonTous.classList.add('filtresbutton'); // Ajoute la classe CSS
+    boutonTous.classList.add('active'); // Le rend vert par défaut
+    sectionFiltres.appendChild(boutonTous); // L'ajoute au DOM
 
-    boutonTous.addEventListener("click", function() { // Ajouter l'événement au bouton "Tous" ici
-        console.log("J'ai cliqué sur : Tous");
-        document.querySelectorAll('.filtresbutton').forEach(btn => btn.classList.remove('active')); // Retirer la classe 'active' de tous les boutons
-        boutonTous.classList.add('active'); // Ajouter la classe 'active' au bouton "Tous"
-        
-        const worksAll = travauxDonnees.filter(function(travail) {
-            genererTravaux(travauxDonnees);
-        })
-        document.querySelector(".gallery").innerHTML = '';  // On vide la galerie actuelle
-        genererTravaux(travauxDonnees)  // On relance la génération avec la liste filtrée
+    boutonTous.addEventListener("click", function() { // Clic sur "Tous"
+        document.querySelectorAll('.filtresbutton').forEach(btn => btn.classList.remove('active')); // Retire le vert partout
+        boutonTous.classList.add('active'); // Met le vert sur "Tous"
+        genererTravaux(travauxDonnees); // Affiche TOUTES les images (reset)
     });
 
-    for (let i = 0; i < categories.length; i++) {
-    const categorie = categories[i]; //La catégorie en cours (ex: "Objets")
-    const bouton = document.createElement("button");
-    bouton.innerText = categorie.name; // Nom de la catégorie
-    bouton.classList.add('filtresbutton') // Classe CSS
+    // --- Boutons par catégorie ---
+    for (let i = 0; i < categories.length; i++) { // Boucle sur chaque catégorie reçue
+        const categorie = categories[i]; // Catégorie en cours
+        const bouton = document.createElement("button"); // Crée un bouton
+        bouton.innerText = categorie.name; // Met le nom (ex: Objets)
+        bouton.classList.add('filtresbutton'); // Ajoute la classe CSS
 
-    bouton.addEventListener("click", function() {  // Gestion du clic sur une catégorie spécifique
-        console.log("J'ai cliqué sur : " + categorie.name); 
-        // Gestion du style
-        document.querySelectorAll('.filtresbutton').forEach(btn => btn.classList.remove('active')); // Retirer la classe 'active' de tous les boutons
-        bouton.classList.add('active'); // Ajouter la classe 'active' au bouton cliqué
-        // Filtrage des données
-        // On garde uniquement les travaux dont l'ID catégorie correspond à celui du bouton cliqué
-        const worksProject = travauxDonnees.filter(function(travail) {
-            return travail.category.id === categorie.id;
+        bouton.addEventListener("click", function() { // Clic sur une catégorie
+            document.querySelectorAll('.filtresbutton').forEach(btn => btn.classList.remove('active')); // Reset style
+            bouton.classList.add('active'); // Active le bouton cliqué
+
+            const travauxFiltres = travauxDonnees.filter(function(travail) { // Filtre le tableau global
+                return travail.category.id === categorie.id; // Garde si l'ID correspond
+            });
+
+            genererTravaux(travauxFiltres); // Affiche seulement les filtrés
         });
-        // Mise à jour de l'affichage
-        document.querySelector(".gallery").innerHTML = '';
-        genererTravaux(worksProject)
-    });
-    // On ajoute le bouton créé à la section filtres
-    sectionFiltres.appendChild(bouton);
-}
+
+        sectionFiltres.appendChild(bouton); // Ajoute le bouton à la page
+    }
 }
 
-// On lance la fonction pour récupérer les catégories
-categories()
+categories(); // Lance la création des filtres
 
+// SECTION 3 : MODE ADMINISTRATEUR
+const token = localStorage.getItem("token"); // Récupère le token de connexion
 
-// SECTION 3 : MODE ADMINISTRATEUR (CONNECTÉ)
-// On vérifie si le token est présent dans le stockage de la session
-const token = localStorage.getItem("token");
+if (token) { // Si un token existe (utilisateur connecté)
+    const editionMode = document.querySelector(".edition-mode"); // Barre noire
+    if (editionMode) editionMode.style.display = "flex"; // Affiche la barre noire
 
-if (token) {
-    // Afficher la barre noire "Mode édition"
-    const editionMode = document.querySelector(".edition-mode");
-    editionMode.style.display = "flex";
+    const editBtn = document.querySelector(".modal-trigger"); // Bouton modifier
+    if (editBtn) {
+        editBtn.style.display = "flex"; // Affiche le bouton
+        editBtn.removeAttribute("hidden"); // Sécurité pour l'afficher
+    }
 
-    // Afficher le bouton "modifier"
-    const editBtn = document.querySelector(".modal-trigger");
-    editBtn.style.display = "flex";
+    const filtersElement = document.querySelector(".filters"); // Les filtres
+    if (filtersElement) filtersElement.style.display = "none"; // Cache les filtres
 
-    // Cacher les filtres
-    const filtersElement = document.querySelector(".filters");
-    filtersElement.style.display = "none";
+    const loginLink = document.getElementById("login-link"); // Lien login
+    if (loginLink) {
+        loginLink.innerText = "logout"; // Change le texte en logout
+        
+        loginLink.addEventListener("click", function(event) { // Clic sur logout
+            event.preventDefault(); // Bloque le lien
+            localStorage.removeItem("token"); // Supprime le token
+            window.location.reload(); // Recharge la page (mode visiteur)
+        });
+    }
 
-    // Changer "login" en "logout"
-    const loginLink = document.getElementById("login-link");
-    loginLink.innerText = "logout";
-    
-    // Gérer la déconnexion quand on clique sur "logout"
-    loginLink.addEventListener("click", function(event) {
-        event.preventDefault(); // On empêche le lien de nous changer de page tout de suite
-        localStorage.removeItem("token"); // On supprime le token
-        window.location.reload(); // On recharge la page (ce qui remettra le site en mode normal)
-    });
+    // SECTION 4 : GESTION MODALE
+    const modal = document.getElementById("modal1"); // La modale
+    const btnModifier = document.querySelector(".modal-trigger"); // Le déclencheur
+    const boutonsFermer = document.querySelectorAll(".modal-close"); // Les croix de fermeture
+    const modalBackground = document.querySelector(".modal"); // L'arrière-plan sombre
 
-    // SECTION 4 : GESTION DE L'OUVERTURE ET FERMETURE DE LA MODALE
-    const modal = document.getElementById("modal1"); // La fenêtre modale entière
-    const btnModifier = document.querySelector(".modal-trigger"); // Le bouton "modifier"
-    const boutonsFermer = document.querySelectorAll(".modal-close"); // La croix
-    const modalBackground = document.querySelector(".modal"); // Le fond grisé
+    if (modal && btnModifier) { // Si les éléments existent
+        btnModifier.addEventListener("click", function(event) { // Ouverture
+            event.preventDefault(); // Bloque le comportement par défaut
+            modal.style.display = "flex"; // Affiche la modale
+            modal.removeAttribute("aria-hidden"); // Accessibilité
+        });
 
-    // Fonction pour ouvrir la modale
-    btnModifier.addEventListener("click", function(event) {
-        event.preventDefault(); // Empêche le lien de nous faire remonter en haut de page
-        modal.style.display = "flex"; // On affiche la modale (flex pour centrer)
-        modal.removeAttribute("aria-hidden"); // Pour l'accessibilité (lecteurs d'écran)
-    });
+        boutonsFermer.forEach(bouton => { // Pour chaque bouton de fermeture
+            bouton.addEventListener("click", function() { // Fermeture
+                modal.style.display = "none"; // Cache la modale
+                modal.setAttribute("aria-hidden", "true"); // Accessibilité
+            });
+        });
 
-    // Fonction pour fermer les modales (au clic sur la croix)
-    boutonsFermer.forEach(bouton => {
-    bouton.addEventListener("click", function() {
-        modal.style.display = "none";
-        modal.setAttribute("aria-hidden", "true");
-    });
-    });
-
-    // Fermer la modale si on clique sur le fond grisé (en dehors de la boîte blanche)
-    modalBackground.addEventListener("click", function(event) {
-        if (event.target === modalBackground) { // On vérifie qu'on clique bien sur le fond et pas sur la boîte
-            modal.style.display = "none";
-            modal.setAttribute("aria-hidden", "true");
-        }
-    });
+        modalBackground.addEventListener("click", function(event) { // Clic extérieur
+            if (event.target === modalBackground) { // Vérifie qu'on clique sur le fond
+                modal.style.display = "none"; // Cache la modale
+                modal.setAttribute("aria-hidden", "true"); // Accessibilité
+            }
+        });
+    }
 }

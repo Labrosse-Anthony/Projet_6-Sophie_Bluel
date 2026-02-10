@@ -1,48 +1,34 @@
-// On sélectionne le formulaire
-const form = document.querySelector("form");
-const errorMessage = document.getElementById("error-message");
+const form = document.querySelector("form"); // Sélectionne le formulaire dans le DOM
+const errorMessage = document.getElementById("error-message"); // Sélectionne la zone d'affichage des erreurs
 
-// On écoute l'événement "submit" (quand on clique sur "Se connecter")
-form.addEventListener("submit", async function(event) {
-    // On empêche le rechargement de la page par défaut
-    event.preventDefault();
+form.addEventListener("submit", async function(event) { // Écoute l'événement d'envoi du formulaire
+    event.preventDefault(); // Empêche le rechargement automatique de la page
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const email = document.getElementById("email").value; // Récupère la valeur du champ email
+    const password = document.getElementById("password").value; // Récupère la valeur du champ mot de passe
 
-    // On prépare l'envoi vers l'API
     try {
-        // await = "Mets-toi en pause et attends la réponse du serveur avant de continuer"
-        // fetch = permet d'envoyer des données à une adresse web (l'API)
-        const response = await fetch("http://localhost:5678/api/users/login", { 
-            method: "POST",
+        const response = await fetch("http://localhost:5678/api/users/login", { // Envoie une requête à l'API
+            method: "POST", // Utilise la méthode POST pour envoyer des données
             headers: {
-                "Content-Type": "application/json" // On précise au serveur qu'on lui envoie du format JSON
+                "Content-Type": "application/json" // Précise que le format envoyé est du JSON
             },
-            // // On transforme notre objet JavaScript (email + password) en texte JSON pour qu'il puisse voyager sur le réseau
-            body: JSON.stringify({
-                email: email,
-                password: password
+            body: JSON.stringify({ // Convertit l'objet JavaScript en chaîne JSON
+                email: email, // L'email saisi
+                password: password // Le mot de passe saisi
             })
         });
 
-        // Si la réponse est OK (status 200)
-        if (response.ok) {
-            const data = await response.json();
-            
-            // IMPORTANT : On stocke le token (le "laissez-passer") dans le navigateur
-            localStorage.setItem("token", data.token);
-            
-            // On redirige vers la page d'accueil
-            window.location.href = "index.html";
+        if (response.ok) { // Vérifie si la réponse du serveur est un succès (code 200)
+            const data = await response.json(); // Convertit la réponse en objet JavaScript
+            localStorage.setItem("token", data.token); // Stocke le token d'authentification dans le navigateur
+            window.location.href = "index.html"; // Redirige l'utilisateur vers la page d'accueil
         } else {
-            // 5. Si erreur (401 ou 404), on affiche un message
-            errorMessage.innerText = "Erreur dans l’identifiant ou le mot de passe";
+            errorMessage.innerText = "Erreur dans l’identifiant ou le mot de passe"; // Affiche un message d'erreur si la connexion échoue
         }
 
     } catch (error) {
-        // Si le serveur est éteint, si l'URL est fausse ou si internet est coupé, le code saute directement ici.
-        console.error("Erreur lors de la connexion :", error);
-        errorMessage.innerText = "Une erreur est survenue, veuillez réessayer.";
+        console.error("Erreur lors de la connexion :", error); // Affiche l'erreur technique dans la console
+        errorMessage.innerText = "Une erreur est survenue, veuillez réessayer."; // Affiche un message d'erreur générique à l'utilisateur
     }
 });

@@ -1,298 +1,208 @@
-// SECTION 1 : GALERIE DE LA MODALE ET SUPPRESSION
-// Fonction pour générer la galerie dans la modale
+// SECTION 1 : GÉNÉRATION GALERIE MODALE ET SUPPRESSION
 function genererTravauxModal(travaux) {
-    const modalGallery = document.querySelector(".modal-gallery");
-    modalGallery.innerHTML = ""; // On vide la galerie avant de la remplir
+    const modalGallery = document.querySelector(".modal-gallery"); // Sélectionne le conteneur de la galerie
+    modalGallery.innerHTML = ""; // Vide la galerie pour éviter les doublons
 
-    for (let i = 0; i < travaux.length; i++) { // On démarre une boucle pour passer sur chaque projet un par un
-        const projet = travaux[i];
-        // Création des éléments
-        const figure = document.createElement("figure");
-        const image = document.createElement("img");
-        const span = document.createElement("span");
-        const trashIcon = document.createElement("i");
+    for (let i = 0; i < travaux.length; i++) { // Parcourt tous les travaux
+        const projet = travaux[i]; // Récupère le projet en cours
 
-        // Configuration de l'image
-        image.src = projet.imageUrl;
-        image.alt = projet.title;
-        image.style.width = "100%"; // Petit ajustement CSS rapide si besoin
+        const figure = document.createElement("figure"); // Crée la balise figure
+        const image = document.createElement("img"); // Crée l'image
+        const span = document.createElement("span"); // Crée le conteneur de l'icône
+        const trashIcon = document.createElement("i"); // Crée l'icône poubelle
 
-        // Configuration de l'icône poubelle
-        trashIcon.classList.add("fa-solid", "fa-trash-can");
-        span.classList.add("trash-icon"); // Classe pour le CSS (positionnement)
-        span.id = projet.id; // On garde l'ID du projet pour savoir quoi supprimer
+        image.src = projet.imageUrl; // Définit l'URL de l'image
+        image.alt = projet.title; // Définit le texte alternatif
+        image.style.width = "100%"; // Ajuste la largeur
 
-        // Assemblage
-        span.appendChild(trashIcon); // On met l'icône poubelle DANS le carré noir (span)
-        figure.appendChild(image); // On met l'image DANS la figure
-        figure.appendChild(span); // On met le carré noir (avec la poubelle) DANS la figure aussi (par dessus l'image grâce au CSS absolute)
-        modalGallery.appendChild(figure); // On ajoute la figure complète DANS la galerie de la modale
+        trashIcon.classList.add("fa-solid", "fa-trash-can"); // Ajoute les classes FontAwesome
+        span.classList.add("trash-icon"); // Ajoute la classe CSS personnalisée
+        span.id = projet.id; // Stocke l'ID du projet
 
-        // GESTION DU CLIC SUR LA POUBELLE
-        span.addEventListener("click", function(event) { // On ajoute 'event' entre parenthèses
-            event.preventDefault();  // On empêche tout comportement par défaut (rechargement...)
-            event.stopPropagation(); // On empêche le clic de "remonter" et de fermer la modale
-            supprimerProjet(projet.id); // On lance la suppression
+        span.appendChild(trashIcon); // Insère la poubelle dans le span
+        figure.appendChild(image); // Insère l'image dans la figure
+        figure.appendChild(span); // Insère le span (poubelle) dans la figure
+        modalGallery.appendChild(figure); // Ajoute le tout à la galerie
+
+        span.addEventListener("click", function(event) { // Écoute le clic sur la poubelle
+            event.preventDefault(); // Bloque le comportement par défaut
+            event.stopPropagation(); // Empêche la fermeture de la modale
+            supprimerProjet(projet.id); // Lance la suppression
         });
     }
 }
 
-async function supprimerProjet(id) { // Fonction asynchrone (car elle appelle le serveur) pour supprimer un projet
-    const token = localStorage.getItem("token"); // Récupère le token  // Sans ce token, l'API refusera la suppression (Erreur 401).
+async function supprimerProjet(id) {
+    const token = localStorage.getItem("token"); // Récupère le token de connexion
 
-    // On ouvre un bloc try/catch pour gérer les erreurs potentielles
     try {
-        const response = await fetch(`http://localhost:5678/api/works/${id}`, { // On envoie une requête au serveur à l'adresse "api/works/ID_DU_PROJET"
-            method: "DELETE", // On précise qu'on veut SUPPRIMER (DELETE)
+        const response = await fetch(`http://localhost:5678/api/works/${id}`, { // Requête DELETE vers l'API
+            method: "DELETE", // Méthode de suppression
             headers: {
-                "Authorization": `Bearer ${token}` // On montre notre "laissez-passer" au serveur. Sans ça, erreur 401 (Interdit)
+                "Authorization": `Bearer ${token}` // En-tête d'autorisation
             }
         });
 
-        if (response.ok) {
-            // Si la suppression a marché :
-            // On met à jour la liste globale des travaux
-            // On garde tout SAUF celui qu'on vient de supprimer
-            travauxDonnees = travauxDonnees.filter(travail => travail.id !== id);
-
-            // On régénère les affichages sans recharger la page
-            genererTravaux(travauxDonnees);       // Met à jour la page d'accueil
-            genererTravauxModal(travauxDonnees);  // Met à jour la modale
-            
-            console.log("Projet supprimé !");  // Petit message dans la console pour dire que tout s'est bien passé
+        if (response.ok) { // Si la suppression a réussi
+            travauxDonnees = travauxDonnees.filter(travail => travail.id !== id); // Met à jour les données locales
+            genererTravaux(travauxDonnees); // Rafraîchit la page d'accueil
+            genererTravauxModal(travauxDonnees); // Rafraîchit la modale
+            console.log("Projet supprimé !"); // Log de confirmation
         } else {
-            console.error("Erreur lors de la suppression"); // Si le serveur dit non , on l'affiche
+            console.error("Erreur lors de la suppression"); // Log d'erreur
         }
     } catch (error) {
-        console.error("Erreur réseau :", error); // On arrive ici seulement si la requête n'a pas pu partir ou revenir
+        console.error("Erreur réseau :", error); // Gestion des erreurs techniques
     }
 }
 
-// SECTION 2 : NAVIGATION DANS LA MODALE (GALERIE AJOUT)
-// On sélectionne les éléments HTML (boutons et conteneurs) pour pouvoir interagir avec eux
-const btnAjouterPhoto = document.querySelector(".btn-add-photo");
-const btnRetour = document.querySelector(".modal-back");
-const vueGalerie = document.querySelector(".modal-view-gallery");
-const vueAjout = document.querySelector(".modal-add");
+// SECTION 2 : NAVIGATION (AFFICHER/CACHER LES VUES)
+const btnAjouterPhoto = document.querySelector(".btn-add-photo"); // Bouton "Ajouter une photo"
+const btnRetour = document.querySelector(".modal-back"); // Flèche retour
+const vueGalerie = document.querySelector(".modal-view-gallery"); // Vue liste des photos
+const vueAjout = document.querySelector(".modal-add"); // Vue formulaire d'ajout
 
-// On vérifie si le bouton existe avant d'ajouter l'événement (pour éviter des erreurs si on n'est pas connecté)
-if (btnAjouterPhoto) {
-    // On écoute le "clic" sur le bouton
-    btnAjouterPhoto.addEventListener("click", function() {
-        // ACTION : On bascule l'affichage
-        // On cache la vue "Galerie" (display: none)
-        document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "none";
-        // On affiche la vue "Ajout" (display: flex pour garder la mise en page flexible)
-        document.querySelector(".modal-wrapper.modal-add").style.display = "flex";
+if (btnAjouterPhoto) { // Si le bouton existe
+    btnAjouterPhoto.addEventListener("click", function() { // Au clic
+        document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "none"; // Cache la galerie
+        document.querySelector(".modal-wrapper.modal-add").style.display = "flex"; // Affiche le formulaire
     });
 }
 
-// Gestion du bouton retour (la flèche)
-if (btnRetour) {
-    btnRetour.addEventListener("click", function() {
-        // ACTION : On fait l'inverse (Retour à la galerie)
-        document.querySelector(".modal-wrapper.modal-add").style.display = "none";     // On cache le formulaire
-        document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // On réaffiche la galerie
+if (btnRetour) { // Si le bouton retour existe
+    btnRetour.addEventListener("click", function() { // Au clic
+        document.querySelector(".modal-wrapper.modal-add").style.display = "none"; // Cache le formulaire
+        document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // Affiche la galerie
     });
 }
 
-// SECTION 3 : PRÉVISUALISATION DE L'IMAGE (AVANT ENVOI)
-// On récupère les éléments liés à l'upload d'image
-const inputPhoto = document.getElementById("file-upload"); // Le champ <input type="file"> (souvent caché)
-const previewImage = document.getElementById("preview-img"); // La balise <img> vide qui servira à la prévisualisation
-const labelPhoto = document.querySelector(".upload-label"); // Le bouton "+ Ajouter photo" visible
-const iconPhoto = document.querySelector(".upload-icon");   // L'icône de montagne/image
-const infoPhoto = document.querySelector(".upload-info");   // Le texte "jpg, png : 4mo max"
+// SECTION 3 : PRÉVISUALISATION DE L'IMAGE UPLOADÉE
+const inputPhoto = document.getElementById("file-upload"); // Input file caché
+const previewImage = document.getElementById("preview-img"); // Image de prévisualisation
+const labelPhoto = document.querySelector(".upload-label"); // Label bouton bleu
+const iconPhoto = document.querySelector(".upload-icon"); // Icône image
+const infoPhoto = document.querySelector(".upload-info"); // Texte d'info
 
-if (inputPhoto) {
-    // On écoute l'événement "change" : se déclenche quand l'utilisateur a choisi un fichier
-    inputPhoto.addEventListener("change", function() {
-        // "this.files[0]" récupère le premier fichier sélectionné par l'utilisateur
-        const file = this.files[0];
+if (inputPhoto) { // Si l'input existe
+    inputPhoto.addEventListener("change", function() { // Quand un fichier est choisi
+        const file = this.files[0]; // Récupère le fichier
 
-        // Si un fichier a bien été sélectionné
-        if (file) {
-            // Création d'un "FileReader" : un outil JS qui permet de lire le contenu d'un fichier sur l'ordi de l'utilisateur
-            const reader = new FileReader();
+        if (file) { // Si un fichier est présent
+            const reader = new FileReader(); // Outil de lecture de fichier
 
-            // On définit ce qui doit se passer une fois que la lecture est finie ("onload")
-            reader.onload = function(e) {
-                // e.target.result contient l'image convertie en code (Base64) lisible par le navigateur
-                previewImage.src = e.target.result; // On donne cette source à notre balise <img>
-                previewImage.style.display = "block"; // On rend l'image visible
+            reader.onload = function(e) { // Une fois lu
+                previewImage.src = e.target.result; // Affiche l'image
+                previewImage.style.display = "block"; // Rend l'image visible
                 
-                // On cache les éléments de décoration (label, icône, texte) pour que l'image prenne toute la place
-                labelPhoto.style.display = "none";
-                iconPhoto.style.display = "none";
-                infoPhoto.style.display = "none";
+                labelPhoto.style.display = "none"; // Cache le label
+                iconPhoto.style.display = "none"; // Cache l'icône
+                infoPhoto.style.display = "none"; // Cache le texte info
+                checkForm(); // Vérifie le formulaire pour activer le bouton
             }
 
-            // C'est cette ligne qui lance la lecture du fichier. Une fois lu, ça déclenchera le "onload" juste au-dessus.
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(file); // Lance la lecture
         }
     });
 }
 
-// SECTION 4 : REMPLISSAGE DU SELECT (MENU DÉROULANT CATÉGORIES)
-// Fonction "async" car on fait un appel réseau (fetch) qui prend du temps
+// SECTION 4 : CHARGEMENT DES CATÉGORIES DANS LE SELECT
 async function chargerCategoriesSelect() {
-    // On cible la balise <select> du HTML par son ID
-    const select = document.getElementById("category-select"); 
-    
-    // On remet le select à zéro (vide) et on ajoute une option "blanche" par défaut.
-    // "disabled selected" fait que cette option est visible au début mais non cliquable ensuite.
-    select.innerHTML = '<option value="" disabled selected></option>';
-    
-    try {
-        // (Cette ligne est bien commentée car inutile : on ne veut pas les travaux ici, mais les catégories)
-        // const reponse = await fetch("http://localhost:5678/api/works"); 
-        // APPEL API : On demande la liste des catégories au serveur
-        const reponseCats = await fetch("http://localhost:5678/api/categories");
-        
-        // CONVERSION : On transforme la réponse brute en tableau JavaScript exploitable
-        const categories = await reponseCats.json();
+    const select = document.getElementById("category-select"); // Sélectionne le menu déroulant
+    select.innerHTML = '<option value="" disabled selected></option>'; // Option vide par défaut
 
-        // BOUCLE : Pour chaque catégorie trouvée (ex: "Objets", "Appartements")...
-        categories.forEach(categorie => {
-            // ... on crée une balise <option> virtuelle
-            const option = document.createElement("option");
-            // On définit la VALEUR cachée qui sera envoyée au serveur (l'ID, ex: 1)
-            option.value = categorie.id;      
-            // On définit le TEXTE visible par l'utilisateur (le Nom, ex: "Objets")
-            option.innerText = categorie.name; 
-            // On insère cette option dans le menu déroulant <select>
-            select.appendChild(option);
+    try {
+        const reponse = await fetch("http://localhost:5678/api/categories"); // Appel API catégories
+        const categories = await reponse.json(); // Conversion en JSON
+
+        categories.forEach(categorie => { // Pour chaque catégorie
+            const option = document.createElement("option"); // Crée une option
+            option.value = categorie.id; // Valeur = ID
+            option.innerText = categorie.name; // Texte = Nom
+            select.appendChild(option); // Ajoute au select
         });
     } catch (error) {
-        // Si le serveur est éteint ou l'URL fausse, on affiche l'erreur dans la console
-        console.error("Erreur lors du chargement des catégories dans le select", error);
+        console.error("Erreur chargement catégories", error); // Log erreur
     }
 }
 
-// On lance la fonction immédiatement au chargement de la page pour que le menu soit prêt
-chargerCategoriesSelect();
+chargerCategoriesSelect(); // Exécute la fonction au chargement
 
-//CHANGEMENT DE COULEUR DU BOUTON QUAND TOUT EST REMPLI
-// On récupère les éléments du formulaire
-const titleInput = document.getElementById("title-input");
-const categorySelect = document.getElementById("category-select");
-const fileInput = document.getElementById("file-upload");
-const submitButton = document.getElementById("btn-valider");
+// SECTION 5 : VÉRIFICATION DU FORMULAIRE (COULEUR BOUTON)
+const titleInput = document.getElementById("title-input"); // Champ titre
+const categorySelect = document.getElementById("category-select"); // Champ catégorie
+const submitButton = document.getElementById("btn-valider"); // Bouton valider
 
-// Fonction qui vérifie si tout est rempli
 function checkForm() {
-    // On vérifie : Est-ce que le titre n'est pas vide ? ET Est-ce qu'une catégorie est choisie ? ET Est-ce qu'il y a un fichier ?
-    if (titleInput.value !== "" && categorySelect.value !== "" && fileInput.files[0]) {
-        
-        // Si tout est bon : Bouton VERT et CLIQUABLE
-        submitButton.style.backgroundColor = "#1D6154";
-        submitButton.disabled = false;
-        
+    // Vérifie si Titre rempli ET Catégorie choisie ET Fichier présent
+    if (titleInput.value !== "" && categorySelect.value !== "" && inputPhoto.files[0]) {
+        submitButton.style.backgroundColor = "#1D6154"; // Vert
+        submitButton.disabled = false; // Active le bouton
+        submitButton.style.cursor = "pointer"; // Curseur main
     } else {
-        
-        // Si il manque quelque chose : Bouton GRIS et NON-CLIQUABLE
-        submitButton.style.backgroundColor = "#A7A7A7";
-        submitButton.disabled = true;
+        submitButton.style.backgroundColor = "#A7A7A7"; // Gris
+        submitButton.disabled = true; // Désactive le bouton
+        submitButton.style.cursor = "default"; // Curseur défaut
     }
 }
 
-// On demande à la page de surveiller les changements sur les 3 champs
-titleInput.addEventListener("input", checkForm);      // Quand on écrit
-categorySelect.addEventListener("change", checkForm); // Quand on choisit une catégorie
-fileInput.addEventListener("change", checkForm);      // Quand on ajoute une photo
+// Ajout des écouteurs pour vérifier en temps réel
+if(titleInput) titleInput.addEventListener("input", checkForm); // Au changement de titre
+if(categorySelect) categorySelect.addEventListener("change", checkForm); // Au changement de catégorie
+// L'input photo appelle déjà checkForm() dans son listener "change" plus haut
 
-//SECTION 5 : ENVOI DU FORMULAIRE (LA CRÉATION DU PROJET)
-// On cible le formulaire complet via son ID
-const formAjout = document.getElementById("add-photo"); 
+// SECTION 6 : ENVOI DU NOUVEAU PROJET
+const formAjout = document.getElementById("add-photo"); // Le formulaire
 
-// Vérification de sécurité : si le formulaire n'existe pas (ex: page login), on ne fait rien
-if (formAjout) {
-    
-    // On écoute l'événement "submit" (déclenché par le bouton "Valider" ou la touche Entrée)
-    formAjout.addEventListener("submit", async function(event) {
-        // TRÈS IMPORTANT : On empêche le rechargement automatique de la page.
-        // Sans ça, la page se rafraîchit avant même que le code JS ne puisse s'exécuter.
-        event.preventDefault();
-        // On récupère le "token" stocké lors de la connexion
-        const token = localStorage.getItem("token");
-        // Si l'utilisateur n'a pas de token (pas connecté ou session expirée), on bloque tout.
-        if (!token) {
-            alert("Vous devez être connecté pour ajouter un projet.");
-            return; // Le "return" arrête la fonction ici.
+if (formAjout) { // Si le formulaire existe
+    formAjout.addEventListener("submit", async function(event) { // À la soumission
+        event.preventDefault(); // Bloque le rechargement de page
+
+        const token = localStorage.getItem("token"); // Vérifie le token
+        if (!token) { // Si pas connecté
+            alert("Veuillez vous connecter"); // Alerte
+            return; // Stoppe tout
         }
 
-        // PRÉPARATION DES DONNÉES
-        
-        // On crée un objet "FormData". 
-        // C'est une "enveloppe" spéciale obligatoire pour envoyer des FICHIERS via fetch.
-        // (Le format JSON classique ne marche pas pour les images).
-        const formData = new FormData();
-        
-        // On remplit l'enveloppe :
-        // L'image (on prend le premier fichier du champ input type="file")
-        formData.append("image", document.getElementById("file-upload").files[0]); 
-        // Le titre (texte)
-        formData.append("title", document.getElementById("title-input").value);    
-        // La catégorie (l'ID sélectionné dans le menu déroulant)
-        formData.append("category", document.getElementById("category-select").value); 
+        const formData = new FormData(); // Crée l'objet pour envoyer des fichiers
+        formData.append("image", inputPhoto.files[0]); // Ajoute l'image
+        formData.append("title", titleInput.value); // Ajoute le titre
+        formData.append("category", categorySelect.value); // Ajoute la catégorie
 
-        // ENVOI AU SERVEUR 
         try {
-            // On envoie la requête à l'API
-            const response = await fetch("http://localhost:5678/api/works", {
-                method: "POST", // Méthode POST pour CRÉER
+            const response = await fetch("http://localhost:5678/api/works", { // Requête POST
+                method: "POST", // Méthode
                 headers: {
-                    // On présente le badge d'authentification (Token)
-                    "Authorization": `Bearer ${token}` 
+                    "Authorization": `Bearer ${token}` // Authentification
                 },
-                body: formData // On met notre enveloppe dans le corps de la requête
+                body: formData // Données
             });
 
-            // Si le serveur répond "Succès" (Code 201 Created ou 200 OK)
-            if (response.ok) {
-                // Le serveur nous renvoie le projet qu'il vient de créer (avec son nouvel ID)
-                const nouveauProjet = await response.json();
-                
-                // MISE À JOUR VISUELLE (SANS RECHARGER LA PAGE)
-                
-                // On ajoute le nouveau projet à notre liste locale 'travauxDonnees'
-                travauxDonnees.push(nouveauProjet);
-                // On régénère la galerie principale (l'accueil) avec la nouvelle photo
-                genererTravaux(travauxDonnees);       
-                // On régénère la galerie de la modale (les petites photos avec poubelles)
-                genererTravauxModal(travauxDonnees);  
+            if (response.ok) { // Si succès (200 ou 201)
+                const nouveauProjet = await response.json(); // Récupère le projet créé
+                travauxDonnees.push(nouveauProjet); // Ajoute aux données locales
+                genererTravaux(travauxDonnees); // Met à jour l'accueil
+                genererTravauxModal(travauxDonnees); // Met à jour la modale
 
-                // --- NETTOYAGE DU FORMULAIRE ---
-                formAjout.reset(); // Vide les champs texte
-                // On remet le design de la zone d'upload à zéro (on cache l'image, on remet l'icône bleue)
-                previewImage.style.display = "none";
-                labelPhoto.style.display = "flex";
-                iconPhoto.style.display = "block";
-                infoPhoto.style.display = "block";
+                // Reset de l'interface
+                formAjout.reset(); // Vide les champs
+                previewImage.style.display = "none"; // Cache la preview
+                labelPhoto.style.display = "flex"; // Affiche le label
+                iconPhoto.style.display = "block"; // Affiche l'icône
+                infoPhoto.style.display = "block"; // Affiche le texte
+                checkForm(); // Remet le bouton en gris
 
-                // FERMETURE DE LA MODALE
-                // On cache la fenêtre d'ajout
-                document.querySelector(".modal-wrapper.modal-add").style.display = "none";
-                // On prépare la fenêtre galerie pour la prochaine ouverture (retour à l'état initial)
-                document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex";
-                
-                // Petit message de confirmation
-                alert("Projet ajouté avec succès !");
-            
+                // Fermeture et retour à la galerie
+                document.querySelector(".modal-wrapper.modal-add").style.display = "none"; // Cache ajout
+                document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // Affiche galerie
+                document.getElementById("modal1").style.display = "none"; // Ferme la modale
+                document.getElementById("modal1").setAttribute("aria-hidden", "true"); // Accessibilité
+
+                alert("Projet ajouté !"); // Confirmation
             } else {
-                // GESTION DES ERREURS SERVEUR
-                // Erreur 401 = Non autorisé (Token invalide ou expiré)
-                if (response.status === 401) {
-                    alert("Votre session a expiré. Veuillez vous reconnecter.");
-                    window.location.href = "login.html"; // On renvoie vers le login
-                } else {
-                    // Autres erreurs (ex: image trop lourde, titre manquant...)
-                    alert("Erreur : Vérifiez les champs (Titre, Catégorie) et la taille de l'image (max 4Mo).");
-                }
-            }       
+                alert("Erreur lors de l'ajout (Vérifiez image < 4Mo)"); // Erreur API
+            }
         } catch (error) {
-            // Si le réseau plante complètement
-            console.error("Erreur technique lors de l'envoi :", error);
+            console.error("Erreur envoi", error); // Erreur réseau
         }
     });
 }

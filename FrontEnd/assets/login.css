@@ -1,132 +1,63 @@
-
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;  /* Force la page à faire au minimum 100% de la hauteur de l'écran */
-    font-size: 14px;
-    background-color: #FFFEF8;
-}
-
-/* Le main pousse le footer vers le bas */
-main {
-    flex: 1;
-    max-width: 1140px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-header {
-    max-width: 1140px;
-    width: 100%;
-    margin-top: 50px auto;
-
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-footer {
-    width: 100%;
-    background-color: white;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: auto;
-}
-
-footer nav {
-    width: 100%;
-    max-width: 1180px;
-    display: flex;
-    justify-content: flex-end;
-    padding: 0;
-}
-
-footer ul {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-footer li {
-    font-family: 'Work Sans';
-    font-size: 14px;
-    color: black;
-    cursor: pointer;
-}
-
 #login {
-    width: 379px;
-    margin: auto;
-    text-align: center;
-    padding-top: 50px; /* Un peu d'espace avec le header */
-}
-
-/* Espacement du titre "Log In" */
-#login h2 {
-    margin-bottom: 20px;
-}
-
-/* Mise en forme du formulaire (les champs les uns sous les autres) */
-#login form {
-    text-align: left;
-    margin-top: 30px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    margin: 50px auto; 
+    margin-top: 150px;
+    margin-bottom: 150px;
 }
 
-/* Style des labels (Email, Mot de passe) */
+#login h2 {
+    margin-bottom: 30px;
+}
+
+#login form {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    max-width: 379px; /* Largeur standard pour ce projet */
+    text-align: left;
+}
+
 #login label {
-    margin: 30px 0 15px 0;
+    margin: 20px 0 10px 0;
     font-weight: 500;
 }
 
-/* Style des champs de saisie (reprise du style #contact) */
-#login input[type="email"],
-#login input[type="password"] {
+#login input {
     height: 50px;
-    font-size: 16px;
     border: none;
-    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09); /* Ajoute l'ombre portée (style Sophie Bluel) */
-    outline: none; /* Enlève la bordure bleue au clic */
-    padding-left: 10px; /* Petit espace pour que le texte ne colle pas au bord */
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+    padding-left: 10px;
+    outline: none; /* Enlève le contour bleu par défaut du navigateur */
 }
 
-/* Style du bouton de connexion */
-/* Note : Le style de base est déjà dans style.css, ici on ajuste juste le curseur */
+/* Style pour le bouton de connexion */
 #login input[type="submit"] {
-	font-family: 'Syne';
-	font-weight: 700;
-	color: white;
-	background-color: #1D6154;
-	margin : 2em auto ;
-	width: 180px;
-    height: 36px;
-	text-align: center;
-	border-radius: 60px ;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    color: white;
+    background-color: #1D6154;
+    margin: 30px auto;
+    width: 180px;
+    border-radius: 60px;
     cursor: pointer;
+    box-shadow: none; /* Pas d'ombre sur le bouton lui-même */
 }
 
-/* Style du lien "Mot de passe oublié" */
+/* Lien "Mot de passe oublié" */
 .forgot-password {
-    display: block;
-    margin-top: 20px;
     text-decoration: underline;
-    color: #3D3D3D;
-    font-family: 'Work Sans', sans-serif;
+    color: black;
+    font-weight: 500;
+    margin-top: 15px;
     font-size: 14px;
 }
 
-/* Style du message d'erreur */
+/* Gestion des erreurs (optionnel, pour le JS) */
 #error-message {
     color: red;
-    font-weight: 700;
+    margin-top: 15px;
     text-align: center;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    font-size: 14px;
+    font-weight: bold;
 }
