@@ -154,6 +154,7 @@ a {
 #contact {
 	width: 35%;
     margin: auto;
+    margin-top: 57px;
 }
 #contact > * {
 	text-align: center;
@@ -191,8 +192,8 @@ a {
 }
 #contact input[type="submit"] {
     width: 180px; 
-    height: 50px;
-    margin: 30px auto; 
+    height: 36px;
+    margin: 40px auto 0 auto; 
     border-radius: 60px;
     background-color: #1D6154;
     color: white;
