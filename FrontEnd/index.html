@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Sophie Bluel - Architecte d'intérieur</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
-    <meta name="description" content="">
-    <link rel="stylesheet" href="./assets/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="./assets/style.css" />
     <script src="./assets/script.js" defer></script>
     <script src="./assets/modal.js" defer></script>
 </head>
@@ -25,14 +25,14 @@
                 <li><a href="#portfolio">projets</a></li>
                 <li><a href="#contact">contact</a></li>
                 <li><a href="login.html" id="login-link">login</a></li>
-                <li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
+                <li><img src="./assets/icons/instagram.png" alt="Instagram" /></li>
             </ul>
         </nav>
     </header>
     <main>
         <section id="introduction">
             <figure>
-                <img src="./assets/images/sophie-bluel.png" alt="">
+                <img src="./assets/images/sophie-bluel.png" alt="" />
             </figure>
             <article>
                 <h2>Designer d'espace</h2>
@@ -56,12 +56,12 @@
             <p>Vous avez un projet ? Discutons-en !</p>
             <form action="#" method="post">
                 <label for="name">Nom</label>
-                <input type="text" name="name" id="name">
+                <input type="text" name="name" id="name" />
                 <label for="email">Email</label>
-                <input type="email" name="email" id="email">
+                <input type="email" name="email" id="email" />
                 <label for="message">Message</label>
                 <textarea name="message" id="message" cols="30" rows="10"></textarea>
-                <input type="submit" value="Envoyer">
+                <input type="submit" value="Envoyer" />
             </form>
         </section>
     </main>
@@ -79,14 +79,11 @@
             <button type="button" class="modal-close modal-close">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            
             <h3 id="titlemodal">Galerie photo</h3>
             <div class="modal-gallery"></div>
-            <hr class="modal-line">
-            
-            <button class="button-add-photo btn-add-photo">Ajouter une photo</button>
+            <hr class="modal-line" />
+            <button type="button" class="button-add-photo btn-add-photo">Ajouter une photo</button>
         </div>
-
         <div class="modal-wrapper modal-add" style="display:none;">
             <div class="modal-nav">
                 <button type="button" class="modal-back"><i class="fa-solid fa-arrow-left"></i></button>
@@ -96,19 +93,19 @@
             <form id="add-photo">
                 <div class="upload-container">
                     <i class="fa-regular fa-image upload-icon"></i>
-                    <img id="preview-img" src="#" alt="Aperçu" style="display:none;">
+                    <img id="preview-img" src="#" alt="Aperçu" style="display:none;" />
                     <label for="file-upload" class="upload-label">+ Ajouter photo</label>
-                    <input type="file" id="file-upload" name="image" accept="image/png, image/jpeg" required>
+                    <input type="file" id="file-upload" name="image" accept="image/png, image/jpeg" required />
                     <p class="upload-info">jpg, png : 4mo max</p>
                 </div>
                 <label for="title-input">Titre</label>
-                <input type="text" id="title-input" name="title" required>
+                <input type="text" id="title-input" name="title" required />
                 <label for="category-select">Catégorie</label>
                 <select id="category-select" name="category" required>
                     <option value="" disabled selected></option>
                 </select>
-                <hr class="modal-line">
-                <input type="submit" value="Valider" id="btn-valider">
+                <hr class="modal-line" />
+                <input type="submit" value="Valider" id="btn-valider" />
             </form>
         </div>
     </aside>

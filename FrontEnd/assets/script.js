@@ -116,32 +116,4 @@ if (token) { // Si un token existe (utilisateur connecté)
             window.location.reload(); // Recharge la page (mode visiteur)
         });
     }
-
-    // SECTION 4 : GESTION MODALE
-    const modal = document.getElementById("modal1"); // La modale
-    const btnModifier = document.querySelector(".modal-trigger"); // Le déclencheur
-    const boutonsFermer = document.querySelectorAll(".modal-close"); // Les croix de fermeture
-    const modalBackground = document.querySelector(".modal"); // L'arrière-plan sombre
-
-    if (modal && btnModifier) { // Si les éléments existent
-        btnModifier.addEventListener("click", function(event) { // Ouverture
-            event.preventDefault(); // Bloque le comportement par défaut
-            modal.style.display = "flex"; // Affiche la modale
-            modal.removeAttribute("aria-hidden"); // Accessibilité
-        });
-
-        boutonsFermer.forEach(bouton => { // Pour chaque bouton de fermeture
-            bouton.addEventListener("click", function() { // Fermeture
-                modal.style.display = "none"; // Cache la modale
-                modal.setAttribute("aria-hidden", "true"); // Accessibilité
-            });
-        });
-
-        modalBackground.addEventListener("click", function(event) { // Clic extérieur
-            if (event.target === modalBackground) { // Vérifie qu'on clique sur le fond
-                modal.style.display = "none"; // Cache la modale
-                modal.setAttribute("aria-hidden", "true"); // Accessibilité
-            }
-        });
-    }
 }

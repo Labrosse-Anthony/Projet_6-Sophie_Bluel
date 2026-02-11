@@ -1,4 +1,36 @@
-// SECTION 1 : GÉNÉRATION GALERIE MODALE ET SUPPRESSION
+// SECTION 1 : GESTION MODALE
+const modal = document.getElementById("modal1"); // La modale
+const btnModifier = document.querySelector(".modal-trigger"); // Le déclencheur
+const boutonsFermer = document.querySelectorAll(".modal-close"); // Les croix de fermeture
+const modalBackground = document.querySelector(".modal"); // L'arrière-plan sombre
+
+if (modal && btnModifier) { // Si les éléments existent
+    btnModifier.addEventListener("click", function (event) { // Ouverture
+        event.preventDefault(); // Bloque le comportement par défaut
+        modal.style.display = "flex"; // Affiche la modale
+        modal.removeAttribute("aria-hidden"); // Accessibilité
+    });
+
+    boutonsFermer.forEach(bouton => { // Pour chaque bouton de fermeture
+        bouton.addEventListener("click", function () { // Fermeture
+            modal.style.display = "none"; // Cache la modale
+            modal.setAttribute("aria-hidden", "true"); // Accessibilité
+            document.querySelector(".modal-wrapper.modal-add").style.display = "none"; // Cache le formulaire d'ajout
+            document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // Affiche la galerie
+        });
+    });
+
+    modalBackground.addEventListener("click", function (event) { // Clic extérieur
+        if (event.target === modalBackground) { // Vérifie qu'on clique sur le fond
+            modal.style.display = "none"; // Cache la modale
+            modal.setAttribute("aria-hidden", "true"); // Accessibilité
+            document.querySelector(".modal-wrapper.modal-add").style.display = "none"; // Cache le formulaire d'ajout
+            document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // Affiche la galerie
+        }
+    });
+}
+
+// SECTION 2 : GÉNÉRATION GALERIE MODALE ET SUPPRESSION
 function genererTravauxModal(travaux) {
     const modalGallery = document.querySelector(".modal-gallery"); // Sélectionne le conteneur de la galerie
     modalGallery.innerHTML = ""; // Vide la galerie pour éviter les doublons
@@ -24,7 +56,7 @@ function genererTravauxModal(travaux) {
         figure.appendChild(span); // Insère le span dans la figure
         modalGallery.appendChild(figure); // Ajoute la figure complète à la galerie
 
-        span.addEventListener("click", function(event) { // Écoute le clic sur la poubelle
+        span.addEventListener("click", function (event) { // Écoute le clic sur la poubelle
             event.preventDefault(); // Bloque le comportement par défaut
             event.stopPropagation(); // Empêche la propagation du clic
             supprimerProjet(projet.id); // Lance la fonction de suppression
@@ -56,27 +88,27 @@ async function supprimerProjet(id) {
     }
 }
 
-// SECTION 2 : NAVIGATION (AFFICHER/CACHER LES VUES)
+// SECTION 3 : NAVIGATION (AFFICHER/CACHER LES VUES)
 const btnAjouterPhoto = document.querySelector(".btn-add-photo"); // Sélectionne le bouton "Ajouter une photo"
 const btnRetour = document.querySelector(".modal-back"); // Sélectionne la flèche de retour
 const vueGalerie = document.querySelector(".modal-view-gallery"); // Sélectionne la vue "Galerie"
 const vueAjout = document.querySelector(".modal-add"); // Sélectionne la vue "Ajout photo"
 
 if (btnAjouterPhoto) { // Vérifie si le bouton existe
-    btnAjouterPhoto.addEventListener("click", function() { // Au clic sur "Ajouter"
+    btnAjouterPhoto.addEventListener("click", function () { // Au clic sur "Ajouter"
         document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "none"; // Cache la galerie
         document.querySelector(".modal-wrapper.modal-add").style.display = "flex"; // Affiche le formulaire
     });
 }
 
 if (btnRetour) { // Vérifie si le bouton retour existe
-    btnRetour.addEventListener("click", function() { // Au clic sur "Retour"
+    btnRetour.addEventListener("click", function () { // Au clic sur "Retour"
         document.querySelector(".modal-wrapper.modal-add").style.display = "none"; // Cache le formulaire
         document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // Affiche la galerie
     });
 }
 
-// SECTION 3 : PRÉVISUALISATION DE L'IMAGE UPLOADÉE
+// SECTION 4 : PRÉVISUALISATION DE L'IMAGE UPLOADÉE
 const inputPhoto = document.getElementById("file-upload"); // Sélectionne l'input file (caché)
 const previewImage = document.getElementById("preview-img"); // Sélectionne l'image de prévisualisation
 const labelPhoto = document.querySelector(".upload-label"); // Sélectionne le bouton bleu "+ Ajouter"
@@ -84,16 +116,16 @@ const iconPhoto = document.querySelector(".upload-icon"); // Sélectionne l'icô
 const infoPhoto = document.querySelector(".upload-info"); // Sélectionne le texte d'information (jpg, png...)
 
 if (inputPhoto) { // Vérifie si l'input existe
-    inputPhoto.addEventListener("change", function() { // Écoute le changement de fichier
+    inputPhoto.addEventListener("change", function () { // Écoute le changement de fichier
         const file = this.files[0]; // Récupère le premier fichier sélectionné
 
         if (file) { // Si un fichier est bien présent
             const reader = new FileReader(); // Crée un outil de lecture de fichier
 
-            reader.onload = function(e) { // Une fois la lecture terminée
+            reader.onload = function (e) { // Une fois la lecture terminée
                 previewImage.src = e.target.result; // Définit la source de l'image avec le résultat
                 previewImage.style.display = "block"; // Rend l'image visible
-                
+
                 labelPhoto.style.display = "none"; // Cache le bouton d'ajout
                 iconPhoto.style.display = "none"; // Cache l'icône par défaut
                 infoPhoto.style.display = "none"; // Cache le texte d'info
@@ -105,7 +137,7 @@ if (inputPhoto) { // Vérifie si l'input existe
     });
 }
 
-// SECTION 4 : CHARGEMENT DES CATÉGORIES DANS LE SELECT
+// SECTION 5 : CHARGEMENT DES CATÉGORIES DANS LE SELECT
 async function chargerCategoriesSelect() {
     const select = document.getElementById("category-select"); // Sélectionne le menu déroulant
     select.innerHTML = '<option value="" disabled selected></option>'; // Ajoute une option vide par défaut
@@ -127,7 +159,7 @@ async function chargerCategoriesSelect() {
 
 chargerCategoriesSelect(); // Lance la fonction au chargement de la page
 
-// SECTION 5 : VÉRIFICATION DU FORMULAIRE (COULEUR BOUTON)
+// SECTION 6 : VÉRIFICATION DU FORMULAIRE (COULEUR BOUTON)
 const titleInput = document.getElementById("title-input"); // Sélectionne le champ Titre
 const categorySelect = document.getElementById("category-select"); // Sélectionne le champ Catégorie
 const submitButton = document.getElementById("btn-valider"); // Sélectionne le bouton Valider
@@ -146,15 +178,14 @@ function checkForm() {
 }
 
 // Ajout des écouteurs pour vérifier en temps réel
-if(titleInput) titleInput.addEventListener("input", checkForm); // Vérifie quand on tape un titre
-if(categorySelect) categorySelect.addEventListener("change", checkForm); // Vérifie quand on change de catégorie
-// L'input photo appelle déjà checkForm() dans son listener "change" plus haut
+if (titleInput) titleInput.addEventListener("input", checkForm); // Vérifie quand on tape un titre
+if (categorySelect) categorySelect.addEventListener("change", checkForm); // Vérifie quand on change de catégorie
 
-// SECTION 6 : ENVOI DU NOUVEAU PROJET
+// SECTION 7 : ENVOI DU NOUVEAU PROJET
 const formAjout = document.getElementById("add-photo"); // Sélectionne le formulaire d'ajout
 
 if (formAjout) { // Vérifie si le formulaire existe
-    formAjout.addEventListener("submit", async function(event) { // Écoute la soumission du formulaire
+    formAjout.addEventListener("submit", async function (event) { // Écoute la soumission du formulaire
         event.preventDefault(); // Empêche le rechargement de la page
 
         const token = localStorage.getItem("token"); // Vérifie si l'utilisateur est connecté
@@ -195,7 +226,7 @@ if (formAjout) { // Vérifie si le formulaire existe
                 document.querySelector(".modal-wrapper.modal-add").style.display = "none"; // Cache la vue ajout
                 document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // Affiche la vue galerie
 
-                alert("Projet ajouté !"); // Affiche une confirmation à l'utilisateur
+                console.log("Projet ajouté !"); // Affiche une confirmation à l'utilisateur
             } else {
                 alert("Erreur lors de l'ajout (Vérifiez image < 4Mo)"); // Affiche une erreur si l'API refuse
             }
