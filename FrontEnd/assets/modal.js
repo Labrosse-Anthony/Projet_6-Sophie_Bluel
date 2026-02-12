@@ -5,233 +5,230 @@ const boutonsFermer = document.querySelectorAll(".modal-close"); // Les croix de
 const modalBackground = document.querySelector(".modal"); // L'arrière-plan sombre
 
 if (modal && btnModifier) { // Si les éléments existent
-    btnModifier.addEventListener("click", function (event) { // Ouverture
-        event.preventDefault(); // Bloque le comportement par défaut
-        modal.style.display = "flex"; // Affiche la modale
-        modal.removeAttribute("aria-hidden"); // Accessibilité
-    });
+  btnModifier.addEventListener("click", function (event) { // Ouverture
+    event.preventDefault(); // Bloque le comportement par défaut
+    modal.style.display = "flex"; // Affiche la modale
+    modal.removeAttribute("aria-hidden"); // Accessibilité
+  });
 
-    boutonsFermer.forEach(bouton => { // Pour chaque bouton de fermeture
-        bouton.addEventListener("click", function () { // Fermeture
-            modal.style.display = "none"; // Cache la modale
-            modal.setAttribute("aria-hidden", "true"); // Accessibilité
-            document.querySelector(".modal-wrapper.modal-add").style.display = "none"; // Cache le formulaire d'ajout
-            document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // Affiche la galerie
-        });
+  boutonsFermer.forEach(bouton => { // Pour chaque bouton de fermeture
+    bouton.addEventListener("click", function () { // Fermeture
+      modal.style.display = "none"; // Cache la modale
+      resetFormulaireAjout(); // Nettoie le formulaire lors de la fermeture
+      modal.setAttribute("aria-hidden", "true"); // Accessibilité
+      document.querySelector(".modal-wrapper.modal-add").style.display = "none"; // Cache le formulaire d'ajout
+      document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // Affiche la galerie
     });
+  });
 
-    modalBackground.addEventListener("click", function (event) { // Clic extérieur
-        if (event.target === modalBackground) { // Vérifie qu'on clique sur le fond
-            modal.style.display = "none"; // Cache la modale
-            modal.setAttribute("aria-hidden", "true"); // Accessibilité
-            document.querySelector(".modal-wrapper.modal-add").style.display = "none"; // Cache le formulaire d'ajout
-            document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // Affiche la galerie
-        }
-    });
+  modalBackground.addEventListener("click", function (event) { // Clic extérieur
+    if (event.target === modalBackground) { // Vérifie qu'on clique sur le fond
+      modal.style.display = "none"; // Cache la modale
+      resetFormulaireAjout(); // Nettoie le formulaire si on clique à côté
+      modal.setAttribute("aria-hidden", "true"); // Accessibilité
+      document.querySelector(".modal-wrapper.modal-add").style.display = "none"; // Cache le formulaire d'ajout
+      document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // Affiche la galerie
+    }
+  });
 }
 
 // SECTION 2 : GÉNÉRATION GALERIE MODALE ET SUPPRESSION
 function genererTravauxModal(travaux) {
-    const modalGallery = document.querySelector(".modal-gallery"); // Sélectionne le conteneur de la galerie
-    modalGallery.innerHTML = ""; // Vide la galerie pour éviter les doublons
+  const modalGallery = document.querySelector(".modal-gallery"); // Sélectionne le conteneur de la galerie
+  modalGallery.innerHTML = ""; // Vide la galerie pour éviter les doublons
 
-    for (let i = 0; i < travaux.length; i++) { // Parcourt tous les travaux reçus
-        const projet = travaux[i]; // Récupère le projet en cours
+  for (let i = 0; i < travaux.length; i++) { // Parcourt tous les travaux reçus
+    const projet = travaux[i]; // Récupère le projet en cours
 
-        const figure = document.createElement("figure"); // Crée la balise figure
-        const image = document.createElement("img"); // Crée la balise img
-        const span = document.createElement("span"); // Crée le conteneur noir pour l'icône
-        const trashIcon = document.createElement("i"); // Crée l'icône poubelle
+    const figure = document.createElement("figure"); // Crée la balise figure
+    const image = document.createElement("img"); // Crée la balise img
+    const span = document.createElement("span"); // Crée le conteneur noir pour l'icône
+    const trashIcon = document.createElement("i"); // Crée l'icône poubelle
 
-        image.src = projet.imageUrl; // Définit l'URL de l'image
-        image.alt = projet.title; // Définit le texte alternatif
-        image.style.width = "100%"; // Ajuste la largeur de l'image
+    image.src = projet.imageUrl; // Définit l'URL de l'image
+    image.alt = projet.title; // Définit le texte alternatif
+    image.style.width = "100%"; // Ajuste la largeur de l'image
 
-        trashIcon.classList.add("fa-solid", "fa-trash-can"); // Ajoute les classes FontAwesome à l'icône
-        span.classList.add("trash-icon"); // Ajoute la classe CSS personnalisée au span
-        span.id = projet.id; // Stocke l'ID du projet dans le span
+    trashIcon.classList.add("fa-solid", "fa-trash-can"); // Ajoute les classes FontAwesome à l'icône
+    span.classList.add("trash-icon"); // Ajoute la classe CSS personnalisée au span
+    span.id = projet.id; // Stocke l'ID du projet dans le span
 
-        span.appendChild(trashIcon); // Insère l'icône dans le span
-        figure.appendChild(image); // Insère l'image dans la figure
-        figure.appendChild(span); // Insère le span dans la figure
-        modalGallery.appendChild(figure); // Ajoute la figure complète à la galerie
+    span.appendChild(trashIcon); // Insère l'icône dans le span
+    figure.appendChild(image); // Insère l'image dans la figure
+    figure.appendChild(span); // Insère le span dans la figure
+    modalGallery.appendChild(figure); // Ajoute la figure complète à la galerie
 
-        span.addEventListener("click", function (event) { // Écoute le clic sur la poubelle
-            event.preventDefault(); // Bloque le comportement par défaut
-            event.stopPropagation(); // Empêche la propagation du clic
-            supprimerProjet(projet.id); // Lance la fonction de suppression
-        });
-    }
+    span.addEventListener("click", function (event) { // Écoute le clic sur la poubelle
+      event.preventDefault(); // Bloque le comportement par défaut
+      event.stopPropagation(); // Empêche la propagation du clic
+      supprimerProjet(projet.id); // Lance la fonction de suppression
+    });
+  }
 }
 
 async function supprimerProjet(id) {
-    const token = localStorage.getItem("token"); // Récupère le token de connexion
+  const token = localStorage.getItem("token"); // Récupère le token de connexion
 
-    try {
-        const response = await fetch(`http://localhost:5678/api/works/${id}`, { // Envoie une requête DELETE à l'API
-            method: "DELETE", // Méthode HTTP utilisée
-            headers: {
-                "Authorization": `Bearer ${token}` // Ajoute le token dans l'en-tête
-            }
-        });
+  try {
+    const response = await fetch(`http://localhost:5678/api/works/${id}`, { // Envoie une requête DELETE à l'API
+      method: "DELETE", // Méthode HTTP utilisée
+      headers: {
+        "Authorization": `Bearer ${token}` // Ajoute le token dans l'en-tête
+      }
+    });
 
-        if (response.ok) { // Si la suppression a réussi
-            travauxDonnees = travauxDonnees.filter(travail => travail.id !== id); // Filtre le tableau local pour retirer le projet
-            genererTravaux(travauxDonnees); // Met à jour la galerie de la page d'accueil
-            genererTravauxModal(travauxDonnees); // Met à jour la galerie de la modale
-            console.log("Projet supprimé !"); // Affiche un message de succès en console
-        } else {
-            console.error("Erreur lors de la suppression"); // Affiche une erreur si l'API refuse
-        }
-    } catch (error) {
-        console.error("Erreur réseau :", error); // Affiche une erreur technique (ex: serveur éteint)
+    if (response.ok) { // Si la suppression a réussi
+      travauxDonnees = travauxDonnees.filter(travail => travail.id !== id); // Retire le projet localement
+      genererTravaux(travauxDonnees); // Met à jour la galerie de la page d'accueil
+      genererTravauxModal(travauxDonnees); // Met à jour la galerie de la modale
+      console.log("Projet supprimé !");
+    } else {
+      console.error("Erreur lors de la suppression");
     }
+  } catch (error) {
+    console.error("Erreur réseau :", error);
+  }
 }
 
 // SECTION 3 : NAVIGATION (AFFICHER/CACHER LES VUES)
-const btnAjouterPhoto = document.querySelector(".btn-add-photo"); // Sélectionne le bouton "Ajouter une photo"
-const btnRetour = document.querySelector(".modal-back"); // Sélectionne la flèche de retour
-const vueGalerie = document.querySelector(".modal-view-gallery"); // Sélectionne la vue "Galerie"
-const vueAjout = document.querySelector(".modal-add"); // Sélectionne la vue "Ajout photo"
+const btnAjouterPhoto = document.querySelector(".btn-add-photo"); // Bouton "Ajouter une photo"
+const btnRetour = document.querySelector(".modal-back"); // Flèche de retour
 
-if (btnAjouterPhoto) { // Vérifie si le bouton existe
-    btnAjouterPhoto.addEventListener("click", function () { // Au clic sur "Ajouter"
-        document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "none"; // Cache la galerie
-        document.querySelector(".modal-wrapper.modal-add").style.display = "flex"; // Affiche le formulaire
-    });
+if (btnAjouterPhoto) {
+  btnAjouterPhoto.addEventListener("click", function () {
+    document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "none";
+    document.querySelector(".modal-wrapper.modal-add").style.display = "flex";
+  });
 }
 
-if (btnRetour) { // Vérifie si le bouton retour existe
-    btnRetour.addEventListener("click", function () { // Au clic sur "Retour"
-        document.querySelector(".modal-wrapper.modal-add").style.display = "none"; // Cache le formulaire
-        document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // Affiche la galerie
-    });
+if (btnRetour) {
+  btnRetour.addEventListener("click", function () {
+    resetFormulaireAjout(); // Nettoie le formulaire en revenant à la galerie
+    document.querySelector(".modal-wrapper.modal-add").style.display = "none";
+    document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex";
+  });
 }
 
 // SECTION 4 : PRÉVISUALISATION DE L'IMAGE UPLOADÉE
-const inputPhoto = document.getElementById("file-upload"); // Sélectionne l'input file (caché)
-const previewImage = document.getElementById("preview-img"); // Sélectionne l'image de prévisualisation
-const labelPhoto = document.querySelector(".upload-label"); // Sélectionne le bouton bleu "+ Ajouter"
-const iconPhoto = document.querySelector(".upload-icon"); // Sélectionne l'icône image par défaut
-const infoPhoto = document.querySelector(".upload-info"); // Sélectionne le texte d'information (jpg, png...)
+const inputPhoto = document.getElementById("file-upload"); // Input file
+const previewImage = document.getElementById("preview-img"); // Image prévisualisation
+const labelPhoto = document.querySelector(".upload-label"); // Bouton bleu
+const iconPhoto = document.querySelector(".upload-icon"); // Icône grise
+const infoPhoto = document.querySelector(".upload-info"); // Texte info
 
-if (inputPhoto) { // Vérifie si l'input existe
-    inputPhoto.addEventListener("change", function () { // Écoute le changement de fichier
-        const file = this.files[0]; // Récupère le premier fichier sélectionné
+if (inputPhoto) {
+  inputPhoto.addEventListener("change", function () {
+    const file = this.files[0];
 
-        if (file) { // Si un fichier est bien présent
-            const reader = new FileReader(); // Crée un outil de lecture de fichier
-
-            reader.onload = function (e) { // Une fois la lecture terminée
-                previewImage.src = e.target.result; // Définit la source de l'image avec le résultat
-                previewImage.style.display = "block"; // Rend l'image visible
-
-                labelPhoto.style.display = "none"; // Cache le bouton d'ajout
-                iconPhoto.style.display = "none"; // Cache l'icône par défaut
-                infoPhoto.style.display = "none"; // Cache le texte d'info
-                checkForm(); // Vérifie le formulaire pour activer le bouton Valider
-            }
-
-            reader.readAsDataURL(file); // Lance la lecture du fichier en URL de données
-        }
-    });
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        previewImage.src = e.target.result;
+        previewImage.style.display = "block";
+        labelPhoto.style.display = "none";
+        iconPhoto.style.display = "none";
+        infoPhoto.style.display = "none";
+        checkForm(); // Vérifie le formulaire pour activer le bouton Valider
+      }
+      reader.readAsDataURL(file);
+    }
+  });
 }
 
 // SECTION 5 : CHARGEMENT DES CATÉGORIES DANS LE SELECT
 async function chargerCategoriesSelect() {
-    const select = document.getElementById("category-select"); // Sélectionne le menu déroulant
-    select.innerHTML = '<option value="" disabled selected></option>'; // Ajoute une option vide par défaut
+  const select = document.getElementById("category-select");
+  select.innerHTML = '<option value="" disabled selected></option>';
 
-    try {
-        const reponse = await fetch("http://localhost:5678/api/categories"); // Appel API pour récupérer les catégories
-        const categories = await reponse.json(); // Convertit la réponse en JSON
+  try {
+    const reponse = await fetch("http://localhost:5678/api/categories");
+    const categories = await reponse.json();
 
-        categories.forEach(categorie => { // Pour chaque catégorie reçue
-            const option = document.createElement("option"); // Crée une balise option
-            option.value = categorie.id; // Définit la valeur (ID)
-            option.innerText = categorie.name; // Définit le texte visible (Nom)
-            select.appendChild(option); // Ajoute l'option au select
-        });
-    } catch (error) {
-        console.error("Erreur chargement catégories", error); // Affiche une erreur en cas de problème
-    }
+    categories.forEach(categorie => {
+      const option = document.createElement("option");
+      option.value = categorie.id;
+      option.innerText = categorie.name;
+      select.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Erreur chargement catégories", error);
+  }
 }
 
-chargerCategoriesSelect(); // Lance la fonction au chargement de la page
+chargerCategoriesSelect();
 
 // SECTION 6 : VÉRIFICATION DU FORMULAIRE (COULEUR BOUTON)
-const titleInput = document.getElementById("title-input"); // Sélectionne le champ Titre
-const categorySelect = document.getElementById("category-select"); // Sélectionne le champ Catégorie
-const submitButton = document.getElementById("btn-valider"); // Sélectionne le bouton Valider
+const titleInput = document.getElementById("title-input");
+const categorySelect = document.getElementById("category-select");
+const submitButton = document.getElementById("btn-valider");
 
 function checkForm() {
-    // Vérifie si Titre rempli ET Catégorie choisie ET Fichier présent
-    if (titleInput.value !== "" && categorySelect.value !== "" && inputPhoto.files[0]) {
-        submitButton.style.backgroundColor = "#1D6154"; // Change la couleur en vert
-        submitButton.disabled = false; // Active le bouton
-        submitButton.style.cursor = "pointer"; // Change le curseur en main
-    } else {
-        submitButton.style.backgroundColor = "#A7A7A7"; // Change la couleur en gris
-        submitButton.disabled = true; // Désactive le bouton
-        submitButton.style.cursor = "default"; // Change le curseur en défaut
-    }
+  if (titleInput.value !== "" && categorySelect.value !== "" && inputPhoto.files[0]) {
+    submitButton.style.backgroundColor = "#1D6154";
+    submitButton.disabled = false;
+    submitButton.style.cursor = "pointer";
+  } else {
+    submitButton.style.backgroundColor = "#A7A7A7";
+    submitButton.disabled = true;
+    submitButton.style.cursor = "default";
+  }
 }
 
-// Ajout des écouteurs pour vérifier en temps réel
-if (titleInput) titleInput.addEventListener("input", checkForm); // Vérifie quand on tape un titre
-if (categorySelect) categorySelect.addEventListener("change", checkForm); // Vérifie quand on change de catégorie
+if (titleInput) titleInput.addEventListener("input", checkForm);
+if (categorySelect) categorySelect.addEventListener("change", checkForm);
 
 // SECTION 7 : ENVOI DU NOUVEAU PROJET
-const formAjout = document.getElementById("add-photo"); // Sélectionne le formulaire d'ajout
+const formAjout = document.getElementById("add-photo");
 
-if (formAjout) { // Vérifie si le formulaire existe
-    formAjout.addEventListener("submit", async function (event) { // Écoute la soumission du formulaire
-        event.preventDefault(); // Empêche le rechargement de la page
+if (formAjout) {
+  formAjout.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-        const token = localStorage.getItem("token"); // Vérifie si l'utilisateur est connecté
-        if (!token) { // Si pas de token
-            alert("Veuillez vous connecter"); // Affiche une alerte
-            return; // Arrête la fonction
-        }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Veuillez vous connecter");
+      return;
+    }
 
-        const formData = new FormData(); // Crée un objet FormData pour envoyer des fichiers
-        formData.append("image", inputPhoto.files[0]); // Ajoute le fichier image
-        formData.append("title", titleInput.value); // Ajoute le titre
-        formData.append("category", categorySelect.value); // Ajoute la catégorie
+    const formData = new FormData();
+    formData.append("image", inputPhoto.files[0]);
+    formData.append("title", titleInput.value);
+    formData.append("category", categorySelect.value);
 
-        try {
-            const response = await fetch("http://localhost:5678/api/works", { // Envoie la requête POST à l'API
-                method: "POST", // Méthode utilisée
-                headers: {
-                    "Authorization": `Bearer ${token}` // Ajoute le token d'authentification
-                },
-                body: formData // Ajoute les données du formulaire
-            });
+    try {
+      const response = await fetch("http://localhost:5678/api/works", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+        body: formData
+      });
 
-            if (response.ok) { // Si la création a réussi (code 200/201)
-                const nouveauProjet = await response.json(); // Récupère le projet créé
-                travauxDonnees.push(nouveauProjet); // Ajoute le projet aux données locales
-                genererTravaux(travauxDonnees); // Met à jour la galerie accueil
-                genererTravauxModal(travauxDonnees); // Met à jour la galerie modale
+      if (response.ok) {
+        const nouveauProjet = await response.json();
+        travauxDonnees.push(nouveauProjet);
+        genererTravaux(travauxDonnees);
+        genererTravauxModal(travauxDonnees);
 
-                // Reset de l'interface
-                formAjout.reset(); // Vide les champs du formulaire
-                previewImage.style.display = "none"; // Cache l'image de prévisualisation
-                labelPhoto.style.display = "flex"; // Affiche le bouton d'ajout
-                iconPhoto.style.display = "block"; // Affiche l'icône par défaut
-                infoPhoto.style.display = "block"; // Affiche le texte d'info
-                checkForm(); // Remet le bouton Valider en gris
+        resetFormulaireAjout(); // Nettoie tout après succès
 
-                // Retour à la vue galerie (sans fermer la modale)
-                document.querySelector(".modal-wrapper.modal-add").style.display = "none"; // Cache la vue ajout
-                document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex"; // Affiche la vue galerie
+        document.querySelector(".modal-wrapper.modal-add").style.display = "none";
+        document.querySelector(".modal-wrapper.modal-view-gallery").style.display = "flex";
+        console.log("Projet ajouté !");
+      } else {
+        alert("Erreur lors de l'ajout (Vérifiez image < 4Mo)");
+      }
+    } catch (error) {
+      console.error("Erreur envoi", error);
+    }
+  });
+}
 
-                console.log("Projet ajouté !"); // Affiche une confirmation à l'utilisateur
-            } else {
-                alert("Erreur lors de l'ajout (Vérifiez image < 4Mo)"); // Affiche une erreur si l'API refuse
-            }
-        } catch (error) {
-            console.error("Erreur envoi", error); // Affiche une erreur technique
-        }
-    });
+// SECTION 8 : RÉINITIALISATION DU FORMULAIRE
+function resetFormulaireAjout() {
+  if (formAjout) formAjout.reset(); // Vide les champs texte, la catégorie et l'input fichier
+  if (previewImage) previewImage.style.display = "none"; // Cache la miniature
+  if (labelPhoto) labelPhoto.style.display = "flex"; // Réaffiche le bouton bleu
+  if (iconPhoto) iconPhoto.style.display = "block"; // Réaffiche l'icône
+  if (infoPhoto) infoPhoto.style.display = "block"; // Réaffiche le texte d'instruction
+  
+  if (typeof checkForm === "function") checkForm(); // Grise le bouton "Valider"
 }
